@@ -72,7 +72,7 @@ class TodoItem extends Component {
         <div className={`todo-text ${checked && 'checked'}`}>
           <div>{text}</div>
         </div>
-        {checked && <div className="check-mark" />}
+        {checked && <div className="check-mark">&#x2713;</div>}
       </TodoItemContainer>
     );
   }
