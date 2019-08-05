@@ -5,6 +5,8 @@ import TodoItemList from './components/TodoItemList';
 import TodoListTemplate from './components/TodoListTemplate';
 import Palette from './components/Palette';
 
+import * as actions from './actions/ActionCreator';
+
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
@@ -19,9 +21,9 @@ class App extends Component {
   state = {
     input: '',
     todos: [
-      { id: 0, text: ' 리액트 소개', checked: false, color: '#f03e3e' },
-      { id: 1, text: ' 리액트 소개', checked: true, color: '#f03e3e' },
-      { id: 2, text: ' 리액트 소개', checked: false, color: '#f03e3e' },
+      // { id: 0, text: ' 리액트 소개', checked: false, color: '#f03e3e' },
+      // { id: 1, text: ' 리액트 소개', checked: true, color: '#f03e3e' },
+      // { id: 2, text: ' 리액트 소개', checked: false, color: '#f03e3e' },
     ],
     colors: ['#343a40', '#f03e3e', '#12b886', '#228ae6'],
     color: '',
@@ -34,17 +36,24 @@ class App extends Component {
   };
 
   handleCreate = () => {
-    const { input, todos, color } = this.state;
+    const { input, color } = this.state;
+    const { store } = this.props;
     console.log('text : ', input);
-    this.setState({
-      input: '',
-      todos: todos.concat({
-        id: this.id++,
-        text: input,
-        checked: false,
-        color: color,
-      }),
-    });
+
+    // [ 리덕스 적용 전 ]
+    // this.setState({
+    //   input: '',
+    //   todos: todos.concat({
+    //     id: this.id++,
+    //     text: input,
+    //     checked: false,
+    //     color: color,
+    //   }),
+    // });
+
+    // [ 리덕스 적용 후 ]
+    store.dispatch(actions.addTodo(input, color));
+
   };
 
   handleKeyPress = (e) => {
@@ -129,7 +138,7 @@ class App extends Component {
       >
         {
           <TodoItemList
-            todos={todos}
+            todos={this.props.store.getState().todos}
             onToggle={handleToggle}
             onRemove={handleRemove}
           />
