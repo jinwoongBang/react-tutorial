@@ -120,7 +120,6 @@ class App extends Component {
   };
 
   render() {
-    // console.log('render()');
     const {
       handleChange,
       handleCreate,
