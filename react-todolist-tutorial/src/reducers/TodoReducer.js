@@ -17,6 +17,21 @@ const TodoReducer = (state = initialState, action) => {
           checked: action.checked,
         }),
       };
+    case types.TOGGLE_TODO:
+      const todos = state.todos;
+      const index = todos.findIndex((todo) => todo.id === action.id);
+      const toggleTodo = todos[index];
+      return {
+        ...state,
+        todos: [
+          ...todos.slice(0, index),
+          {
+            ...toggleTodo,
+            checked: !toggleTodo.checked,
+          },
+          ...todos.slice(index + 1, todos.length),
+        ],
+      };
     default:
       return state;
   }

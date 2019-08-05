@@ -16,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 class App extends Component {
-  id = 3;
+  // id = 3;
 
   state = {
     input: '',
@@ -62,9 +62,11 @@ class App extends Component {
 
   handleToggle = (id) => {
     console.log('handleToggle() - ', id);
-    const { todos } = this.state;
-    const index = todos.findIndex((todo) => todo.id === id);
-    const selected = todos[index];
+    // const { todos } = this.state;
+
+    // const index = todos.findIndex((todo) => todo.id === id);
+    // const selected = todos[index];
+
     // [ 방법 1 ]
     // const nextTodos = [...todos];
 
@@ -78,16 +80,20 @@ class App extends Component {
     // })
 
     // [ 방법 2 ]
-    this.setState({
-      todos: [
-        ...todos.slice(0, index),
-        {
-          ...selected,
-          checked: !selected.checked,
-        },
-        ...todos.slice(index + 1, todos.length),
-      ],
-    });
+    // this.setState({
+    //   todos: [
+    //     ...todos.slice(0, index),
+    //     {
+    //       ...selected,
+    //       checked: !selected.checked,
+    //     },
+    //     ...todos.slice(index + 1, todos.length),
+    //   ],
+    // });
+
+    // [ 리덕스 적용 ]
+    const { store } = this.props;
+    store.dispatch(actions.toggleTodo(id));
   };
 
   handleRemove = (id) => {
