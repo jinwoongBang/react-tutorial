@@ -3,14 +3,15 @@ import { createGlobalStyle } from 'styled-components';
 import Form from './components/Form';
 import TodoItemList from './components/TodoItemList';
 import TodoListTemplate from './components/TodoListTemplate';
+import Palette from './components/Palette';
 
 const GlobalStyle = createGlobalStyle`
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: sans-serif;
-        background: #f9f9f9;
-    }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background: #f9f9f9;
+  }
 `;
 class App extends Component {
   id = 3;
@@ -18,10 +19,12 @@ class App extends Component {
   state = {
     input: '',
     todos: [
-      { id: 0, text: ' 리액트 소개', checked: false },
-      { id: 1, text: ' 리액트 소개', checked: true },
-      { id: 2, text: ' 리액트 소개', checked: false },
+      { id: 0, text: ' 리액트 소개', checked: false, color: '#f03e3e' },
+      { id: 1, text: ' 리액트 소개', checked: true, color: '#f03e3e' },
+      { id: 2, text: ' 리액트 소개', checked: false, color: '#f03e3e' },
     ],
+    colors: ['#343a40', '#f03e3e', '#12b886', '#228ae6'],
+    color: '',
   };
 
   handleChange = (e) => {
@@ -31,7 +34,7 @@ class App extends Component {
   };
 
   handleCreate = () => {
-    const { input, todos } = this.state;
+    const { input, todos, color } = this.state;
     console.log('text : ', input);
     this.setState({
       input: '',
@@ -39,6 +42,7 @@ class App extends Component {
         id: this.id++,
         text: input,
         checked: false,
+        color: color,
       }),
     });
   };
@@ -77,19 +81,33 @@ class App extends Component {
     });
   };
 
-
   handleRemove = (id) => {
-    const {todos} = this.state;
-    const nextTodos = todos.filter(todo => todo.id !== id);
+    const { todos } = this.state;
+    const nextTodos = todos.filter((todo) => todo.id !== id);
 
     this.setState({
-      todos: nextTodos
-    })
-  }
+      todos: nextTodos,
+    });
+  };
+
+  handleColor = (color) => {
+    console.log('선택된 색상 : ', color);
+
+    this.setState({
+      color: color,
+    });
+  };
 
   render() {
-    const { handleChange, handleCreate, handleKeyPress, handleToggle, handleRemove } = this;
-    const { input, todos } = this.state;
+    const {
+      handleChange,
+      handleCreate,
+      handleKeyPress,
+      handleToggle,
+      handleRemove,
+      handleColor,
+    } = this;
+    const { input, todos, colors, color } = this.state;
     return (
       <TodoListTemplate
         form={
@@ -98,10 +116,24 @@ class App extends Component {
             value={input}
             onCreate={handleCreate}
             onKeyPress={handleKeyPress}
+            selectedColor={color}
+          />
+        }
+        palette={
+          <Palette
+            colors={colors}
+            onSelect={handleColor}
+            selectedColor={color}
           />
         }
       >
-        {<TodoItemList todos={todos} onToggle={handleToggle} onRemove={handleRemove}/>}
+        {
+          <TodoItemList
+            todos={todos}
+            onToggle={handleToggle}
+            onRemove={handleRemove}
+          />
+        }
       </TodoListTemplate>
     );
   }

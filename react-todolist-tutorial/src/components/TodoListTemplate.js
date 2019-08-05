@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Palette from './Palette';
 
 const MainContainer = styled.main`
   background: white;
@@ -22,15 +23,21 @@ const MainContainer = styled.main`
     border-bottom: 1px solid #22b8cf;
   }
 
+  .palette-wrapper {
+    padding: 1rem;
+    background: #E5E5E5;
+  }
+
   .todos-wrapper {
     min-height: 5rem;
   }
 `;
 
-const TodoListTemplate = ({ form, children }) => {
+const TodoListTemplate = ({ form, children, palette }) => {
   return (
     <MainContainer className="todo-list-template">
       <div className="title">오늘 할 일</div>
+      <section className="palette-wrapper">{palette}</section>
       <section className="form-wrapper">{form}</section>
       <section className="todo-wrapper">{children}</section>
     </MainContainer>
