@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { createGlobalStyle } from 'styled-components';
-import Form from './components/Form';
-import TodoItemList from './components/TodoItemList';
+
 import TodoListTemplate from './components/TodoListTemplate';
 import Palette from './components/Palette';
 
 import * as actions from './actions/ActionCreator';
+import FormContainer from './components/Form';
+import TodoItemListContainer from './containers/TodoItemListContainer';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -22,140 +23,39 @@ class App extends Component {
     colors: ['#343a40', '#f03e3e', '#12b886', '#228ae6'],
   };
 
-  handleChange = (e) => {
-    
-    // this.setState({
-    //   input: e.target.value,
-    // });
-
-    // [ 리덕스 적용 ]
-    const { store } = this.props;
-    console.log('handleChange() - ', e.target.value);
-    store.dispatch(actions.changeTodoInput(e.target.value));
-  };
-
-  handleCreate = () => {
-    const { store } = this.props;
-
-    // [ 리덕스 적용 전 ]
-    // this.setState({
-    //   input: '',
-    //   todos: todos.concat({
-    //     id: this.id++,
-    //     text: input,
-    //     checked: false,
-    //     color: color,
-    //   }),
-    // });
-
-    // [ 리덕스 적용 후 ]
-    store.dispatch(
-      actions.addTodo(store.getState().input, store.getState().color),
-    );
-  };
-
-  handleKeyPress = (e) => {
-    if (e.key === 'Enter') this.handleCreate();
-  };
-
   handleToggle = (id) => {
-    console.log('handleToggle() - ', id);
-    // const { todos } = this.state;
-
-    // const index = todos.findIndex((todo) => todo.id === id);
-    // const selected = todos[index];
-
-    // [ 방법 1 ]
-    // const nextTodos = [...todos];
-
-    // nextTodos[index] = {
-    //   ...selected,
-    //   checked: !selected.checked
-    // };
-
-    // this.setState({
-    //   todos: nextTodos
-    // })
-
-    // [ 방법 2 ]
-    // this.setState({
-    //   todos: [
-    //     ...todos.slice(0, index),
-    //     {
-    //       ...selected,
-    //       checked: !selected.checked,
-    //     },
-    //     ...todos.slice(index + 1, todos.length),
-    //   ],
-    // });
-
-    // [ 리덕스 적용 ]
-    const { store } = this.props;
-    store.dispatch(actions.toggleTodo(id));
+    // const { store } = this.props;
+    // store.dispatch(actions.toggleTodo(id));
   };
 
   handleRemove = (id) => {
-    // const { todos } = this.state;
-    // const nextTodos = todos.filter((todo) => todo.id !== id);
-
-    // this.setState({
-    //   todos: nextTodos,
-    // });
-
     // [ 리덕스 적용 ]
-    const { store } = this.props;
-    store.dispatch(actions.removeTodo(id));
+    // const { store } = this.props;
+    // store.dispatch(actions.removeTodo(id));
   };
 
   handleColor = (color) => {
-    console.log('선택된 색상 : ', color);
-
-    // this.setState({
-    //   color: color,
-    // });
-
     // [ 리덕스 적용 ]
-    const { store } = this.props;
-    store.dispatch(actions.chageTodoColor(color));
+    // const { store } = this.props;
+    // store.dispatch(actions.chageTodoColor(color));
   };
 
   render() {
-    const {
-      handleChange,
-      handleCreate,
-      handleKeyPress,
-      handleToggle,
-      handleRemove,
-      handleColor,
-    } = this;
+    const { handleColor } = this;
     const { colors } = this.state;
-    const { store } = this.props;
+
     return (
       <TodoListTemplate
-        form={
-          <Form
-            onChange={handleChange}
-            value={store.getState().input}
-            onCreate={handleCreate}
-            onKeyPress={handleKeyPress}
-            selectedColor={store.getState().color}
-          />
-        }
+        form={<FormContainer />}
         palette={
           <Palette
             colors={colors}
-            onSelect={handleColor}
-            selectedColor={store.getState().color}
+            // onSelect={handleColor}
+            // selectedColor={store.getState().color}
           />
         }
       >
-        {
-          <TodoItemList
-            todos={store.getState().todos}
-            onToggle={handleToggle}
-            onRemove={handleRemove}
-          />
-        }
+        {<TodoItemListContainer />}
       </TodoListTemplate>
     );
   }

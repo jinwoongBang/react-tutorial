@@ -8,9 +8,9 @@ import { Provider } from 'react-redux';
 
 const store = createStore(TodoReducer);
 
-const render = () => {
-  ReactDom.render(<App store={store} />, document.getElementById('root'));
-};
-render();
-
-store.subscribe(render);
+ReactDom.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root'),
+);

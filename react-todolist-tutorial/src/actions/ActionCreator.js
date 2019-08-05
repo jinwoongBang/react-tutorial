@@ -28,5 +28,4 @@ export const chageTodoColor = (color) => ({
 export const changeTodoInput = (input) => ({
   type: types.CHANGE_INPUT,
   input,
-  input,
 });
