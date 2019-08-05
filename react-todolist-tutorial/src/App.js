@@ -19,26 +19,23 @@ class App extends Component {
   // id = 3;
 
   state = {
-    input: '',
-    todos: [
-      // { id: 0, text: ' 리액트 소개', checked: false, color: '#f03e3e' },
-      // { id: 1, text: ' 리액트 소개', checked: true, color: '#f03e3e' },
-      // { id: 2, text: ' 리액트 소개', checked: false, color: '#f03e3e' },
-    ],
     colors: ['#343a40', '#f03e3e', '#12b886', '#228ae6'],
-    color: '',
   };
 
   handleChange = (e) => {
-    this.setState({
-      input: e.target.value,
-    });
+    
+    // this.setState({
+    //   input: e.target.value,
+    // });
+
+    // [ 리덕스 적용 ]
+    const { store } = this.props;
+    console.log('handleChange() - ', e.target.value);
+    store.dispatch(actions.changeTodoInput(e.target.value));
   };
 
   handleCreate = () => {
-    const { input, color } = this.state;
     const { store } = this.props;
-    console.log('text : ', input);
 
     // [ 리덕스 적용 전 ]
     // this.setState({
@@ -52,8 +49,9 @@ class App extends Component {
     // });
 
     // [ 리덕스 적용 후 ]
-    store.dispatch(actions.addTodo(input, color));
-
+    store.dispatch(
+      actions.addTodo(store.getState().input, store.getState().color),
+    );
   };
 
   handleKeyPress = (e) => {
@@ -97,23 +95,32 @@ class App extends Component {
   };
 
   handleRemove = (id) => {
-    const { todos } = this.state;
-    const nextTodos = todos.filter((todo) => todo.id !== id);
+    // const { todos } = this.state;
+    // const nextTodos = todos.filter((todo) => todo.id !== id);
 
-    this.setState({
-      todos: nextTodos,
-    });
+    // this.setState({
+    //   todos: nextTodos,
+    // });
+
+    // [ 리덕스 적용 ]
+    const { store } = this.props;
+    store.dispatch(actions.removeTodo(id));
   };
 
   handleColor = (color) => {
     console.log('선택된 색상 : ', color);
 
-    this.setState({
-      color: color,
-    });
+    // this.setState({
+    //   color: color,
+    // });
+
+    // [ 리덕스 적용 ]
+    const { store } = this.props;
+    store.dispatch(actions.chageTodoColor(color));
   };
 
   render() {
+    // console.log('render()');
     const {
       handleChange,
       handleCreate,
@@ -122,29 +129,30 @@ class App extends Component {
       handleRemove,
       handleColor,
     } = this;
-    const { input, todos, colors, color } = this.state;
+    const { colors } = this.state;
+    const { store } = this.props;
     return (
       <TodoListTemplate
         form={
           <Form
             onChange={handleChange}
-            value={input}
+            value={store.getState().input}
             onCreate={handleCreate}
             onKeyPress={handleKeyPress}
-            selectedColor={color}
+            selectedColor={store.getState().color}
           />
         }
         palette={
           <Palette
             colors={colors}
             onSelect={handleColor}
-            selectedColor={color}
+            selectedColor={store.getState().color}
           />
         }
       >
         {
           <TodoItemList
-            todos={this.props.store.getState().todos}
+            todos={store.getState().todos}
             onToggle={handleToggle}
             onRemove={handleRemove}
           />

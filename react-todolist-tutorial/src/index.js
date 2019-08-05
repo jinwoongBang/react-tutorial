@@ -7,7 +7,6 @@ import TodoReducer from './reducers/TodoReducer';
 const store = createStore(TodoReducer);
 
 const render = () => {
-  console.log('render()');
   ReactDom.render(<App store={store} />, document.getElementById('root'));
 };
 render();

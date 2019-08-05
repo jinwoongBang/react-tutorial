@@ -14,3 +14,19 @@ export const toggleTodo = (id) => ({
   type: types.TOGGLE_TODO,
   id: id,
 });
+
+export const removeTodo = (id) => ({
+  type: types.REMOVE_TODO,
+  id: id,
+});
+
+export const chageTodoColor = (color) => ({
+  type: types.CHANGE_COLOR,
+  color: color,
+});
+
+export const changeTodoInput = (input) => ({
+  type: types.CHANGE_INPUT,
+  input,
+  input,
+});
