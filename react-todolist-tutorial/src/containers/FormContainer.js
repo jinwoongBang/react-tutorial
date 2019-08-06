@@ -10,9 +10,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   onCreate: (text, color) => dispatch(actions.addTodo(text, color)),
   onChange: (input) => dispatch(actions.changeTodoInput(input)),
-  // onKeyPress: (e, text, color) => {
-  //   if (e.key === 'Enter') dispatch(actions.addTodo(text, color));
-  // },
 });
 
 const FormContainer = connect(

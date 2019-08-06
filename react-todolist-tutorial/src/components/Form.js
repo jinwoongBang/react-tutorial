@@ -30,13 +30,13 @@ const Container = styled.div`
   }
 `;
 
-const Form = ({ value, selectedColor, onChange, onCreate, onKeyPress }) => {
+const Form = ({ value, selectedColor, onChange, onCreate }) => {
   return (
     <Container>
       <input
         value={value}
         onChange={(e) => {onChange(e.target.value)}}
-        onKeyPress={onKeyPress}
+        onKeyPress={(e) => {e.key === 'Enter' && onCreate(e.target.value, selectedColor)}}
         style={{ color: selectedColor }}
       />
       <div className="create-button" onClick={() => onCreate(value, selectedColor)}>
