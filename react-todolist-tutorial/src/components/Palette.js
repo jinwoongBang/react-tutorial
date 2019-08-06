@@ -55,7 +55,7 @@ export default class Palette extends Component {
   };
 
   render() {
-    const { onSelect, colors, selectedColor } = this.props;
+    const { colors, selectedColor, onSelect } = this.props;
 
     return (
       <PaletteContainer>

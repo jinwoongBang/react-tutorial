@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import * as actions from '../actions/ActionCreator';
-import { connect } from 'react-redux';
-
 const Container = styled.div`
   display: flex;
 
@@ -33,75 +30,71 @@ const Container = styled.div`
   }
 `;
 
-// const Form = ({ value, onChange, onCreate, selectedColor, onKeyPress }) => {
-//   console.log("form()");
+const Form = ({ value, selectedColor, onChange, onCreate, onKeyPress }) => {
+  return (
+    <Container>
+      <input
+        value={value}
+        onChange={(e) => {onChange(e.target.value)}}
+        onKeyPress={onKeyPress}
+        style={{ color: selectedColor }}
+      />
+      <div className="create-button" onClick={() => onCreate(value, selectedColor)}>
+        추가
+      </div>
+    </Container>
+  );
+};
 
-//   const onSubmit = () => {
-//     onCreate(value, selectedColor);
+export default Form;
+
+// class Form extends Component {
+
+//   onChange = (e) => {
+//     this.props.onChange(e.target.value);
 //   }
 
-//   return (
-//     <Container>
-//       <input
-//         value={value}
-//         onChange={onChange}
-//         onKeyPress={onKeyPress}
-//         style={{ color: selectedColor }}
-//       />
-//       <div className="create-button" onClick={onSubmit}>
-//         추가
-//       </div>
-//     </Container>
-//   );
-// };
+//   onClick = () => {
+//     this.props.onCreate(this.props.input, this.props.selectedColor);
+//   }
 
-class Form extends Component {
+//   onKeyPress = (e) => {
+//     if(e.key === 'Enter') this.props.onCreate(this.props.input, this.props.selectedColor);
+//   }
 
-  onChange = (e) => {
-    this.props.onChange(e.target.value);
-  }
+//   render() {
+//     const { input, selectedColor } = this.props;
+//     const { onChange, onClick, onKeyPress } = this;
 
-  onClick = () => {
-    this.props.onCreate(this.props.input, this.props.selectedColor);
-  }
+//     return (
+//       <Container>
+//         <input
+//           value={input}
+//           onChange={onChange}
+//           onKeyPress={onKeyPress}
+//           style={{ color: selectedColor }}
+//         />
+//         <div className="create-button" onClick={onClick}>
+//           추가
+//         </div>
+//       </Container>
+//     );
+//   }
+// }
 
-  onKeyPress = (e) => {
-    if(e.key === 'Enter') this.props.onCreate(this.props.input, this.props.selectedColor);
-  }
+// const mapStateToProps = (state) => ({
+//   selectedColor: state.color,
+//   input: state.input,
+// });
 
-  render() {
-    const { input, selectedColor } = this.props;
-    const { onChange, onClick, onKeyPress } = this;
+// const mapDispatchToProps = (dispatch) => ({
+//   onCreate: (text, color) => dispatch(actions.addTodo(text, color)),
+//   onChange: (value) => dispatch(actions.changeTodoInput(value)),
+// });
 
-    return (
-      <Container>
-        <input
-          value={input}
-          onChange={onChange}
-          onKeyPress={onKeyPress}
-          style={{ color: selectedColor }}
-        />
-        <div className="create-button" onClick={onClick}>
-          추가
-        </div>
-      </Container>
-    );
-  }
-}
+// const FormContainer = connect(
+//   mapStateToProps,
+//   mapDispatchToProps,
+// )(Form);
 
-const mapStateToProps = (state) => ({
-  selectedColor: state.color,
-  input: state.input,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onCreate: (text, color) => dispatch(actions.addTodo(text, color)),
-  onChange: (value) => dispatch(actions.changeTodoInput(value)),
-});
-
-const FormContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Form);
-
-export default FormContainer;
+// export default FormContainer;

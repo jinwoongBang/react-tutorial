@@ -56,7 +56,6 @@ class TodoItem extends Component {
 
   render() {
     const { text, checked, id, onToggle, onRemove, color } = this.props;
-    console.log(id);
 
     return (
       <TodoItemContainer onClick={() => onToggle(id)}>

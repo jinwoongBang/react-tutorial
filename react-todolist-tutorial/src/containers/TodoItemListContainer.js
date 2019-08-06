@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions/ActionCreator';
 import TodoItemList from '../components/TodoItemList'
@@ -8,7 +7,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onToggle: (id) => {actions.toggleTodo(id)}
+    onToggle: (id) => dispatch(actions.toggleTodo(id)),
+    onRemove: (id) => dispatch(actions.removeTodo(id))
 });
 
 const TodoItemListContainer = connect(mapStateToProps, mapDispatchToProps)(TodoItemList)
