@@ -27,6 +27,7 @@ class TodosContainer extends Component {
     const { remove } = this.props;
     remove(id);
   };
+  
   render() {
     const { handleChange, handleInsert, handleToggle, handleRemove } = this;
     const { input, todos } = this.props;
