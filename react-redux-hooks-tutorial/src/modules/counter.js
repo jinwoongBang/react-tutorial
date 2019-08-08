@@ -3,15 +3,15 @@
  */
 
 // [1. Action type]
-const INCREMENT = 'counter/INCREMENT';
-const DECREMENT = 'counter/DECREMENT';
+export const INCREMENT = 'counter/INCREMENT';
+export const DECREMENT = 'counter/DECREMENT';
 
 // [2. Action Creator]
 export const increment = () => ({ type: INCREMENT });
 export const decrement = () => ({ type: DECREMENT });
 
 // [3. initial state]
-const initialState = {
+export const initialState = {
   number: 0
 };
 
