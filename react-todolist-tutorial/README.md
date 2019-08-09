@@ -1,1 +1,29 @@
 ### 1. 프로퍼티와 Template 및 Wrapper 컴포넌트 구조 짜기
+```javascript
+ <TodoListTemplate
+        form={
+          <Form
+            onChange={handleChange}
+            value={input}
+            onCreate={handleCreate}
+            onKeyPress={handleKeyPress}
+            selectedColor={color}
+          />
+        }
+        palette={
+          <Palette
+            colors={colors}
+            onSelect={handleColor}
+            selectedColor={color}
+          />
+        }
+      >
+        {
+          <TodoItemList
+            todos={todos}
+            onToggle={handleToggle}
+            onRemove={handleRemove}
+          />
+        }
+      </TodoListTemplate>
+```
