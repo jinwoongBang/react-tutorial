@@ -1,6 +1,6 @@
 ## 목차
 
-### `class 형 컴포넌트 & 함수형 컴포넌트`
+### `1. class 형 컴포넌트 & 함수형 컴포넌트`
 [방법 1 - class 형 컴포넌트]
 ```javascript
 export default class MyName extends Component {
