@@ -8,12 +8,16 @@
 6. 리덕스
 7. 리덕스 리액트
 8. 리덕스 ducks 구조(리덕스 기조 구조의 간편화)
-9. 리덕스 hooks ( useState, useMemo, useCallback, useRef, useEffect )
-10. 리덕스 리액트 hooks ( useSelector, useDispatch, useStore )
-11. HOC (공통된 코드를 컴포넌트화 해 커스텀 사용하기)
+9. immutable.js
+10. 리덕스 hooks ( useState, useMemo, useCallback, useRef, useEffect )
+11. 리덕스 리액트 hooks ( useSelector, useDispatch, useStore )
+12. HOC (공통된 코드를 컴포넌트화 해 커스텀 사용하기)
 ---
 [앞으로 해야 할 것들]
-1. thunk
-2. saga
-3. promise 랑 async await / call back 
-
+1. router
+2. thunk
+3. saga
+4. promise 랑 async await / call back 
+5. immune.js
+6. typescript
+7. graphQL
