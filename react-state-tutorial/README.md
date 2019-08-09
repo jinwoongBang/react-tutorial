@@ -1,8 +1,8 @@
 ## 목차
 
 ### `class 형 컴포넌트 & 함수형 컴포넌트`
+[방법 1 - class 형 컴포넌트]
 ```
-// [방법 1 - class 형 컴포넌트]
 export default class MyName extends Component {
   static defaultProps = {
     name: "기본 이름"
@@ -15,9 +15,10 @@ export default class MyName extends Component {
       </div>
     );
   }
-}
+}```
 
-// [방법 2 - 함수형 컴포넌트]
+[방법 2 - 함수형 컴포넌트]
+```
 const MyName = ({ name }) => {
   return (
     <div>
