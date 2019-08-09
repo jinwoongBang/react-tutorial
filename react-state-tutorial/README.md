@@ -34,19 +34,23 @@ MyName.defaultProps = {
 ```
 
 ### `2. life cycle`
+#### (1) 최초 render() 전
 ```javascript
 componentWillMount() {
-    // 최초 render() 전
     console.log("componentWillMount() - deprecated");
   }
 ```
+#### (2) 최초 render() 후
+- ajax, fetch, DOM 의 속성을 읽거나 직접 변경하는 작업에 사용
 ```javascript
   componentDidMount() {
-    // 최초 render() 후
-    // ajax, fetch, DOM 의 속성을 읽거나 직접 변경하는 작업
+    //
     console.log("componentDidMount()");
   }
 ```
+#### (3) boolean 값에 따라 render() 호출
+- true 일 때 render() 호출
+- false 일 때 render() 비 호출
 ```javascript
   shouldComponentUpdate(nextProps, nextState) {
     console.log("nextProps : ", nextProps);
@@ -60,28 +64,31 @@ componentWillMount() {
     return true;
   }
 ```
+#### (4) shouldComponentUpdate 가 true 일 경우에만 호출
 ```javascript
   componentWillUpdate(nextProps, nextState) {
-    // shouldComponentUpdate 가 true 일 경우에만 호출
     console.log("nextProps : ", nextProps);
     console.log("nextState : ", nextState);
     console.log("componentWillUpdate(nextProps, nextState)");
   }
 ```
+#### (5) render() 호출 후
+- 최초 랜더 이후의 랜더
 ```javascript
   componentDidUpdate(prevProps, prevState) {
-    // render() 호출 후
     console.log("prevProps : ", prevProps);
     console.log("prevState : ", prevState);
     console.log("componentDidUpdate(prevProps, prevState)");
   }
 ```
+#### (6) 컴포넌트 제거 
+- 이벤트 제거 등에 사용
 ```javascript
   componentWillUnmount() {
-    // 컴포넌트 제거 (이벤트 제거 등에 사용)
     console.log("componentWillUnmount()");
   }
 ```
+#### (7) 에러 발생 시 호출
 ```javascript
   componentDidCatch(error, info) {
     console.log("error", error);
