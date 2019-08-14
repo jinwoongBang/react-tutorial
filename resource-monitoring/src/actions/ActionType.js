@@ -1,2 +1,3 @@
-export const TEST_TYPE = "TEST_TYPE";
 export const CHANGE_TOGGLE = "CHANGE_TOGGLE";
+export const CHANGE_PAGE = "CHANGE_PAGE";
+export const SEARCH_DEVICE = "SEARCH_DEVICE";

@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
-import TestReducer from './TestReducer';
-import MenuReducer from './MenuReducer';
+import HeaderReducer from './HeaderReducer';
+import DeviceReducer from './DeviceReducer';
 
 const rootReducer = combineReducers({
-    Test: TestReducer,
-    Menu: MenuReducer
+    Header: HeaderReducer,
+    Device: DeviceReducer
 });
 
 export default rootReducer;
