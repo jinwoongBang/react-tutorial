@@ -1,33 +1,32 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import Card from './Card';
 import { Container, Row, Col } from 'reactstrap';
+import axios, { withAxios } from 'axios';
+import testData from '../lib/test-data';
 
 const CardListContainer = styled(Container)``;
 
-const CardList = ({ searchDevice, list }) => {
-  console.log('test');
-
-  const deviceList = useCallback((e) => {
-    console.log(searchDevice());
+const CardList = ({ DeviceActions, deviceList }) => {
+  useEffect(() => {
+    console.log('useEffect() invoked');
+    DeviceActions.getPost().then((res) => {
+      console.log(res);
+    });
   }, []);
+
+  console.log('deviceList : ', deviceList);
 
   return (
     <CardListContainer fluid={true} className="border p-0">
       <Row className="">
-        {list.map((item, key) => {
-        return (
-          <Col md="4" className="" key={key} >
-            <Card info={item} />
-          </Col>
-        )})}
       </Row>
     </CardListContainer>
   );
 };
 
-CardList.defaultProps = {
-  list: [{}, {}, {}]
-};
+// CardList.defaultProps = {
+//   list: [{}, {}, {}]
+// };
 
 export default CardList;

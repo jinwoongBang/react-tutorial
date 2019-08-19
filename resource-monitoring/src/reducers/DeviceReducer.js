@@ -1,6 +1,5 @@
 import React from 'react';
 import * as types from '../actions/ActionType';
-// import {} from 'axios';
 
 const initialState = {
   deviceList: [
@@ -17,24 +16,26 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  console.log('state : ', state);
   switch (action.type) {
-    case types.SEARCH_DEVICE:
-      /* api 검색 조건 */
-      const searchCondition = action.searchCondition;
-      /* api 검색 결과 */
-      const result = [
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {}
-      ];
+    case types.GET_POST_PENDING:
       return {
         ...state,
-        deviceList: result
+        pending: true,
+        error: false
+      };
+    case types.GET_POST_SUCCESS:
+      const { data } = action.result;
+      return {
+        ...state,
+        pending: true,
+        error: false,
+        result: data
+      };
+    case types.GET_POST_FAILURE:
+      return {
+        ...state,
+        pending: false,
+        error: true,
       };
     default:
       return state;

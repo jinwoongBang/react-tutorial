@@ -1,3 +1,6 @@
 export const CHANGE_TOGGLE = "CHANGE_TOGGLE";
 export const CHANGE_PAGE = "CHANGE_PAGE";
+export const GET_POST_PENDING = "GET_POST_PENDING";
+export const GET_POST_SUCCESS = "GET_POST_SUCCESS";
+export const GET_POST_FAILURE = "GET_POST_FAILURE";
 export const SEARCH_DEVICE = "SEARCH_DEVICE";

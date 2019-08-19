@@ -4,7 +4,6 @@ import Header from '../components/Header';
 import * as actions from '../actions/ActionCreator';
 
 const mapStateToProps = (state) => {
-    console.log(state);
     return ({
         toggle: state.Header.toggle,
         currentPage: state.Header.currentPage

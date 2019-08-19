@@ -1,0 +1,67 @@
+{
+  "data": [
+    {
+      "displayName": "Test_displayName",
+      "osType": 1,
+      "osVersion": "Test_osVersion",
+      "volume": 111111,
+      "cpuInfo": "Test_cpuInfo",
+      "gpuInfo": "Test_gpuInfo",
+      "date": "20190202"
+    },
+    {
+      "displayName": "Test_displayName",
+      "osType": 1,
+      "osVersion": "Test_osVersion",
+      "volume": 111111,
+      "cpuInfo": "Test_cpuInfo",
+      "gpuInfo": "Test_gpuInfo",
+      "date": "20190202"
+    },
+    {
+      "displayName": "Test_displayName",
+      "osType": 1,
+      "osVersion": "Test_osVersion",
+      "volume": 111111,
+      "cpuInfo": "Test_cpuInfo",
+      "gpuInfo": "Test_gpuInfo",
+      "date": "20190202"
+    },
+    {
+      "displayName": "Test_displayName",
+      "osType": 1,
+      "osVersion": "Test_osVersion",
+      "volume": 111111,
+      "cpuInfo": "Test_cpuInfo",
+      "gpuInfo": "Test_gpuInfo",
+      "date": "20190202"
+    },
+    {
+      "displayName": "Test_displayName",
+      "osType": 1,
+      "osVersion": "Test_osVersion",
+      "volume": 111111,
+      "cpuInfo": "Test_cpuInfo",
+      "gpuInfo": "Test_gpuInfo",
+      "date": "20190202"
+    },
+    {
+      "displayName": "Test_displayName",
+      "osType": 1,
+      "osVersion": "Test_osVersion",
+      "volume": 111111,
+      "cpuInfo": "Test_cpuInfo",
+      "gpuInfo": "Test_gpuInfo",
+      "date": "20190202"
+    },
+    {
+      "displayName": "Test_displayName",
+      "osType": 1,
+      "osVersion": "Test_osVersion",
+      "volume": 111111,
+      "cpuInfo": "Test_cpuInfo",
+      "gpuInfo": "Test_gpuInfo",
+      "date": "20190202"
+    }
+  ]
+}
