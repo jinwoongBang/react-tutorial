@@ -27,9 +27,7 @@ class Header extends Component {
   }
 
   render() {
-    // console.log(this.props);
     const { changeToggle, changePage, toggle } = this.props;
-    console.log('toggle : ', toggle);
 
     return (
       <HeaderContainer className="border" fluid={true}>

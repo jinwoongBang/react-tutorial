@@ -15,18 +15,11 @@ import {
 } from 'reactstrap';
 
 const CustomCardContainer = styled(Card)`
-  margin: 10px 10px 10px 10px;
+  
 `;
 
-const CustomCard = ({
-  displayName,
-  osType,
-  osVersion,
-  volume,
-  cpuInfo,
-  gpuInfo,
-  date
-}) => {
+const CustomCard = ({deviceInfo}) => {
+  const { displayName, osVersion, volume, cpuInfo, gpuInfo, date} = deviceInfo;
   return (
     <CustomCardContainer>
       <CardImg top width="100%" src="/favicon.ico" alt="Card image cap" />

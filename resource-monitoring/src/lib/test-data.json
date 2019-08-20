@@ -1,6 +1,7 @@
 {
   "data": [
     {
+      "deviceId": 1,
       "displayName": "Test_displayName",
       "osType": 1,
       "osVersion": "Test_osVersion",
@@ -10,6 +11,7 @@
       "date": "20190202"
     },
     {
+      "deviceId": 2,
       "displayName": "Test_displayName",
       "osType": 1,
       "osVersion": "Test_osVersion",
@@ -19,6 +21,7 @@
       "date": "20190202"
     },
     {
+      "deviceId": 3,
       "displayName": "Test_displayName",
       "osType": 1,
       "osVersion": "Test_osVersion",
@@ -28,6 +31,7 @@
       "date": "20190202"
     },
     {
+      "deviceId": 4,
       "displayName": "Test_displayName",
       "osType": 1,
       "osVersion": "Test_osVersion",
@@ -37,6 +41,7 @@
       "date": "20190202"
     },
     {
+      "deviceId": 5,
       "displayName": "Test_displayName",
       "osType": 1,
       "osVersion": "Test_osVersion",
@@ -46,6 +51,7 @@
       "date": "20190202"
     },
     {
+      "deviceId": 6,
       "displayName": "Test_displayName",
       "osType": 1,
       "osVersion": "Test_osVersion",
@@ -55,6 +61,7 @@
       "date": "20190202"
     },
     {
+      "deviceId": 7,
       "displayName": "Test_displayName",
       "osType": 1,
       "osVersion": "Test_osVersion",

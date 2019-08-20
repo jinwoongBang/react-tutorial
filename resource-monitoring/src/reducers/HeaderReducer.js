@@ -3,7 +3,6 @@ import * as types from '../actions/ActionType';
 
 const initialState = {
   toggle: true,
-  currentPage: 'Home'
 };
 
 const reducer = (state = initialState, action) => {
@@ -12,11 +11,6 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         toggle: !state.toggle
-      };
-    case types.CHANGE_PAGE:
-      return {
-        ...state,
-        currentPage: action.currentPage
       };
     default:
       return state;

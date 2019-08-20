@@ -2,17 +2,9 @@ import React from 'react';
 import * as types from '../actions/ActionType';
 
 const initialState = {
-  deviceList: [
-    {
-      displayName: '',
-      osType: '',
-      osVersion: '',
-      volume: '',
-      cpuInfo: '',
-      gpuInfo: '',
-      date: new Date()
-    }
-  ]
+  pending: false,
+  error: false,
+  result: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -27,7 +19,7 @@ const reducer = (state = initialState, action) => {
       const { data } = action.result;
       return {
         ...state,
-        pending: true,
+        pending: false,
         error: false,
         result: data
       };
@@ -35,7 +27,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         pending: false,
-        error: true,
+        error: true
+      };
+    case types.CHANGE_PENDING:
+      return {
+        ...state,
+        pending: true
       };
     default:
       return state;
