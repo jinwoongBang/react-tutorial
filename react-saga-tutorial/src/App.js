@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import * as counterActions from './modules/counter';
 
 class App extends Component {
+  
   render() {
     const { CounterActions, number } = this.props;
+    console.log('test');
     console.log(CounterActions);
     return (
       <div>
