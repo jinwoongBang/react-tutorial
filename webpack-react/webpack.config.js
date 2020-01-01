@@ -32,13 +32,17 @@ module.exports = {
                 use: [
                     {
                         loader: "html-loader", // 사용할 로더 이름
-                        options: { minimize: true } // 사용할 로더 옵션 (minimize 옵션은 빌드가 한줄로 됨)
+                        options: { minimize: false } // 사용할 로더 옵션 (minimize 옵션은 빌드가 한줄로 됨)
                     }
                 ]
             },
             {
                 test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader"]
+                use: [MiniCssExtractPlugin.loader, "css-loader"] // css-loader 로 읽고, MiniCssExtractPlugin 을 통해 css 추출 (오른쪽에서 왼쪽 순서로 작동)
+            },
+            {
+                test: /\.scss$/,
+                use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
             }
         ]
     },
