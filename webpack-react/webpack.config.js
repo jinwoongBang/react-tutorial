@@ -19,7 +19,12 @@ module.exports = {
         filename: "bundle.js",
         path: path.resolve(__dirname + "/build")
     },
-    mode: "none",
+    devServer: {
+        contentBase: path.resolve("./build"),
+        index: "index.html",
+        port: 9000
+    },
+    mode: "development",
     module: {
         rules: [
             {
