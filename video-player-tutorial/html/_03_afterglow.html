@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/afterglowplayer@1.x"
+    ></script>
+  </head>
+  <body>
+    <video
+      class="afterglow"
+      id="my-video"
+      width="160"
+      height="90"
+      poster="./upload/download.jpg"
+      data-autoresize='fit'
+    >
+      <source
+        type="video/mp4"
+        src="./upload/02.내 손안의 차트_V180628000168-Untitled QuickTime Movie.mov"
+      />
+    </video>
+
+    <a class='afterglow' href="#my-video">Lightbox</a>
+
+    <script>
+      var lastposition = 0;
+
+      afterglow.on('my-video', 'before-lightbox-close', function(event) {
+        // Store the playback time
+        console.log("event.player.currentTime() : ", event.player.currentTime());
+        lastposition = event.player.currentTime();
+      });
+
+      afterglow.on('my-video', 'ready', function(event) {
+        // Load the playback time
+        console.log("lastposition : ", lastposition);
+        event.player.currentTime(lastposition);
+      });
+    </script>
+  </body>
+</html>

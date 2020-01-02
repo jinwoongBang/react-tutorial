@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+
+    <link href="https://vjs.zencdn.net/7.5.5/video-js.css" rel="stylesheet" />
+
+    <!-- Video.js base CSS -->
+    <!-- <link href="https://unpkg.com/video.js@7/dist/video-js.min.css" rel="stylesheet" /> -->
+    <!-- City -->
+    <!-- <link href="https://unpkg.com/@videojs/themes@1/dist/city/index.css" rel="stylesheet" /> -->
+
+    <!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
+    <!-- <script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script> -->
+  </head>
+  <body>
+    <video
+      id="my-video"
+      class="video-js"
+      controls
+      preload="auto"
+      width="640"
+      height="264"
+      poster="./upload/download.jpg"
+      data-setup="{}"
+    >
+      <source
+        src="./upload/02.내 손안의 차트_V180628000168-Untitled QuickTime Movie.mov"
+        type="video/mp4"
+      />
+    </video>
+
+    <input type="button" value="play" onclick=play()></input>
+    <input type="button" value="pause" onclick=pause()></input>
+
+    <script src="https://vjs.zencdn.net/7.5.5/video.js"></script>
+
+    <script>
+      var player = videojs('my-video');
+      var Component = videojs.getComponent('Component');
+      var myComponent = new Component(player);
+      var myFunc = function() {
+        var myComponent = this;
+        console.log('myComponent : ', myComponent);
+        // player.pause();
+        myComponent.on();
+      };
+
+      myComponent.on('test', myFunc);
+      // myComponent.trigger('test');
+
+      const pause = () => {
+        console.log("pause");
+        player.pause();
+      }
+
+      const play = () => {
+        console.log("play");
+        player.play();
+      }
+    </script>
+  </body>
+</html>

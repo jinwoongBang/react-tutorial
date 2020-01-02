@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <video id="player">
+        <source src="./upload/02.내 손안의 차트_V180628000168-Untitled QuickTime Movie.mov" type="video/mp4" />
+    </video>
+    <button onclick=play()>play</button>
+    <button onclick=pause()>pause</button>
+    <button onclick=viewCurrentTime()>Current Time</button>
+    <button onclick=addFiveSeconds()>+ 5 Seconds</button>
+
+
+    <script>
+        var vid = document.getElementById("player");
+        console.log("vid : ", vid);
+        vid.controls=true;
+        console.log("controller : ", vid.controller);
+        
+
+        const play = (event) => {
+            console.log("event : ", event);
+            vid.play();
+            
+        };
+
+        const pause = (event) => {
+            console.log("event : ", event);
+            vid.pause();
+        };
+        
+        const addFiveSeconds = () => {
+            let currentTime = vid.currentTime;
+            console.log("currentTime : ", currentTime);
+            vid.currentTime = currentTime + 5.00;
+        }
+
+        const viewCurrentTime = () => {
+            let currentTime = vid.currentTime;
+            console.log("currentTime : ", currentTime);
+        }
+    </script>
+</body>
+</html>
