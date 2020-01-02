@@ -1,7 +1,7 @@
 const path = require("path");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // css 를 추출해서 파일로 저장하는 플러그인
-
+const { CleanWebpackPlugin } = require("clean-webpack-plugin"); // 빌드 시 사용되지 않는 파일 자동 삭제
 /**
  * [1] entry
  *  -  웹펙이 빌드할 파일을 알려줌
@@ -17,10 +17,10 @@ module.exports = {
     entry: "./src/index.js",
     output: {
         filename: "bundle.js",
-        path: path.resolve(__dirname + "/build")
+        path: path.resolve("../build")
     },
     devServer: {
-        contentBase: path.resolve("./build"),
+        contentBase: path.resolve("../build"),
         index: "index.html",
         port: 9000
     },
@@ -43,12 +43,8 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader"] // css-loader 로 읽고, MiniCssExtractPlugin 을 통해 css 추출 (오른쪽에서 왼쪽 순서로 작동)
+                use: ["style-loader", "css-loader"] // css-loader 로 읽고, MiniCssExtractPlugin 을 통해 css 추출 (오른쪽에서 왼쪽 순서로 작동)
             },
-            {
-                test: /\.scss$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
-            }
         ]
     },
     plugins: [
@@ -56,8 +52,6 @@ module.exports = {
             template: './public/index.html', // public/index.html 파일을 읽는다
             filename: 'index.html'
         }),
-        new MiniCssExtractPlugin({
-            filename: 'style.css'
-        })
+        new CleanWebpackPlugin()
     ]
 }
