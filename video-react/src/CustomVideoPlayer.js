@@ -1,14 +1,42 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 /* import imageSource from './image/IMG_7839.JPG'; */
 
 import styled from 'styled-components';
 
 const CustomVideoPlayerContainer = styled.div`
     border: 1px solid tomato;
-    padding: 10px 10px 10px 10px;
+    padding: 50px 50px 50px 50px;
 
     video {
         width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+    div {
+        padding: 0;
+        margin: 0;
+    }
+    .video-container {
+        position: relative;
+    }
+    .video-time-bar {
+        position: relative;
+        width: 100%;
+        height: 1vh;
+        background-color: tomato;
+    }
+    .video-cap {
+        position: relative;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        background-color: #1D84FF;
+        opacity: 1.0;
+        padding: 10px 10px 10px 10px;
     }
 
     .border {
@@ -22,12 +50,13 @@ const CustomVideoPlayerContainer = styled.div`
         overflow: hidden;
         height: 20vw;
         width: 100%;
+        border: 20px solid #1D84FF;
     }
 
     /* [2] Time Bar's Thumbnail image */
     .time-img-container {
         position: relative;
-        top: 0px;
+        top: 0;
         bottom: 0;
         left: 0;
         right: 0;
@@ -36,9 +65,9 @@ const CustomVideoPlayerContainer = styled.div`
         height: 100%;
     }
 
-    .hide-container {
+    .time-img-cap {
         position: absolute;
-        top: 0px;
+        top: 0;
         bottom: 0;
         left: 0;
         right: 0;
@@ -52,11 +81,6 @@ const CustomVideoPlayerContainer = styled.div`
     .time-img {
         position: relative;
         z-index: 0;
-        /*
-        top: 0px;
-        bottom: 0;
-        left: 0;
-        right: 0; */
         width: 100%;
     } 
 
@@ -69,11 +93,9 @@ const CustomVideoPlayerContainer = styled.div`
         left: 0;
         right: 0;
         background-color: white;
-        height: 20vw;
+        height: 20vh;
         width: 1%;
-        opacity: 0.1;
-        padding: 0;
-        margin: 0;
+        opacity: 1.0;
     }
     .time-bar-button {
         width: 100%;
@@ -101,89 +123,183 @@ const calculatePercent = (width, clientX) => {
     return currentX;
 }
 
-
 const CustomVideoPlayer = ({ src, skim }) => {
     const playerContainer = useRef(null);
     const timelineContainer = useRef(null);
-    const [timeBarX, setTimeBarX] = useState(10.00);
+    const timeBarContainer = useRef(null);
+
+    const [timeBarX, setTimeBarX] = useState("");
+    const [timePercent, setTimePercent] = useState(10.00);
     const [mouseY, setMouseY] = useState(10.00);
     const [draggable, setDraggable] = useState(false);
 
-    const [player, setPlayer] = useState(playerContainer.current);
+    const [videoCurrentTime, setVideoCurrentTime] = useState(0.00);
+    const [videoDuration, setVideoDuration] = useState(0.00);
+    const [isPlayed, setIsPlayed] = useState(false);
 
     useEffect(() => {
+        const {
+            buffered,
+            readyState,
+            currentTime,
+            duration,
+            paused,
+            played,
+            onwaiting
+        } = playerContainer.current;
+        const { offsetWidth } = timelineContainer.current;
         console.log('init playerContainer');
-        const { current } = playerContainer;
-        console.log("current : ", playerContainer);
-        console.log("loadedmetadata : ", current.loadedmetadata);
-        setPlayer(current);
-    }, [playerContainer]);
+        console.log("width : ", offsetWidth)
+        /*
+            buffered: TimeRanges {length: 1}
+            readyState: 4
+            seeking: false
+            currentTime: 0
+            duration: 64.767979
+            paused: true
+            played: TimeRanges {length: 0}
+            ended: false
+            autoplay: false
+            loop: false
+            onwaiting: null
+        */
+       /*
+            buffered,
+            readyState,
+            currentTime,
+            duration,
+            paused,
+            played,
+            onwaiting
+       */
+    }, []);
 
-    // useEffect(() => {
-    //     if(player.readyState) {
-    //         console.log("readyState : ", player.readyState);
-    //     }
-    // }, [player.readyState]);
-
-    const onMouseDown = ({ screenX, clientX, pageX, target, currentTarget }) => {
-        const { offsetWidth } = timelineContainer.current;
-        const currentX = calculatePercent(offsetWidth, clientX);
-
-        setTimeBarX(currentX);
-        setDraggable(true);
+    /**
+     * [1] 비디오 관련 Functions
+     */
+    const onClickPlay = ({ screenX, clientX, pageX, target, currentTarget }) => {
+        const player = playerContainer.current;
+        player.play();
+        setIsPlayed(player.paused);
     };
-
-    const onMouseDownButton = ({ screenX, clientX, pageX, target, currentTarget }) => {
-        const { offsetWidth } = timelineContainer.current;
-        const currentX = calculatePercent(offsetWidth, clientX);
-
-        setTimeBarX(currentX);
-        setDraggable(true);
+    const onClickPause = ({ screenX, clientX, pageX, target, currentTarget }) => {
+        const player = playerContainer.current;
+        player.pause();
+        setIsPlayed(player.paused);
+    };
+    const onPlaying = (event) => {
+        console.log("event : ", event);
+    }
+    const onWaiting = (props) => {
+        console.log("onwaiting() : ");
+    }
+    const onProgress = (props) => {
+        console.log("onprogress() : ");
+    }
+    const onCanPlay = (props) => {
+        const { duration, readyState } = playerContainer.current;
+        setVideoDuration(duration);
+    }
+    const onTimeUpdate = () => {
+        const { currentTime, seekToNextFrame } = playerContainer.current;
+        const { style } = timeBarContainer.current;
+        setVideoCurrentTime(currentTime);
+        setTimeBarX(style.left);
     }
 
-    const onMouseMove = ({ screenX, clientX, pageX, clientY, target, currentTarget }) => {
+    const calculateTimePercent = useMemo(() => {
+        const currentPercent = videoCurrentTime / videoDuration * 100;
+        setTimePercent(currentPercent);
+    }, [videoCurrentTime, videoDuration]);
+
+
+    /**
+     * [2] 타임라인 관련 Functions
+     */
+    const mouseUpInBackground = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        setDraggable(false);
+    }, []);
+
+    const mouseDownInTimeline = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        const { offsetWidth } = timelineContainer.current;
+        const currentX = calculatePercent(offsetWidth, clientX);
+        console.log("currentX : ", currentX);
+        playerContainer.current.currentTime = currentX * videoDuration;
+        setTimePercent(currentX);
+        setDraggable(true);
+    }, []);
+
+    const mouseDownInBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        const { offsetWidth } = timelineContainer.current;
+        const currentX = calculatePercent(offsetWidth, clientX);
+
+        setTimePercent(currentX);
+        setDraggable(true);
+    }, []);
+
+    const mouseMoveInBackground = useCallback(({ screenX, clientX, pageX, clientY, target, currentTarget }) => {
         if (draggable) {
             const { offsetWidth } = timelineContainer.current;
             const currentX = calculatePercent(offsetWidth, clientX);
-            setTimeBarX(currentX);
+            setTimePercent(currentX);
         }
-    }
+    }, [draggable]);
 
-    const onMouseUp = ({ screenX, clientX, pageX, target, currentTarget }) => {
-        setDraggable(false);
-    };
-
-    const onContextMenu = (event) => {
+    const contextMenuInBackground = useCallback((event) => {
         event.preventDefault();
-    }
+    }, []);
 
 
     return (
-        <CustomVideoPlayerContainer onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
-            <div className="video-container border">
-                <video ref={playerContainer} controls={true} preload="metadata">
+        <CustomVideoPlayerContainer
+            onMouseMove={mouseMoveInBackground}
+            onMouseUp={mouseUpInBackground}
+            onContextMenu={contextMenuInBackground}
+        >
+            <div className="video-container">
+                <video
+                    ref={playerContainer}
+                    controls={false}
+                    preload="metadata"
+                    onTimeUpdate={onTimeUpdate}
+                    onCanPlay={onCanPlay}
+                    onWaiting={onWaiting}
+                    onProgress={onProgress}
+                >
                     <source src={src}></source>
                 </video>
+                <div className="video-time-bar">
+                    --
+                </div>
+                <div className="video-cap">
+                    <div>
+                        <button onClick={onClickPlay}>Play</button>
+                        <button onClick={onClickPause}>Pause</button>
+                    </div>
+                    <div>
+                        <p style={{"color": "white"}}>진행 시간 : {videoCurrentTime} 초</p>
+                        <p style={{"color": "white"}}>Origin Time Bar : {timePercent + "%"}</p>
+                        <p style={{"color": "white"}}>Custom Time Bar : {timeBarX}</p>
+                        <p style={{"color": "white"}}>Error (Origin - Custom) : {timePercent - timeBarX.substring(0, timeBarX.indexOf('%'))}%</p>
+                    </div>
+                </div>
             </div>
             <div
-                className="time-line-container border"
+                className="time-line-container"
                 ref={timelineContainer}
-                onContextMenu={onContextMenu}
             >
-                <div
-                    className="time-img-container"
-                    // onMouseDown={onMouseDown}
-                >
-                    <img className="time-img border" src={skim} />
+                <div className="time-img-container">
+                    <img className="time-img" src={skim} />
                 </div>
-                <div className="hide-container" onMouseDown={onMouseDown} onDrag={(event) => {console.log("drag"); event.preventDefault();}}/>
+                <div className="time-img-cap" onMouseDown={mouseDownInTimeline} />
                 <div
+                    ref={timeBarContainer}
                     className="time-bar-container"
-                    style={{ "left": timeBarX + "%" }}
+                    style={{ "left": timePercent + "%" }}
                 >
                     <button
                         className="time-bar-button"
-                        onMouseDown={onMouseDownButton}
+                        onMouseDown={mouseDownInBar}
                     />
                 </div>
             </div>

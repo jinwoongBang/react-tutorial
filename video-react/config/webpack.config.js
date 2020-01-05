@@ -489,7 +489,7 @@ module.exports = function (webpackEnv) {
               ),
             },
             {
-              test: /\.(png|jpg|gif)$/i,
+              test: /\.(png|jpg|gif|mov|mp4)$/i,
               use: [
                 {
                   loader: 'url-loader',
