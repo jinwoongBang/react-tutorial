@@ -6,11 +6,20 @@ import styled from 'styled-components';
 const CustomVideoPlayerContainer = styled.div`
     border: 1px solid tomato;
     padding: 50px 50px 50px 50px;
+    overflow: hidden;
+    
 
     video {
+        position: relative;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 20px 20px 20px 20px;
         width: 100%;
         padding: 0;
         margin: 0;
+        box-shadow: 5px 5px 5px gray;
     }
     div {
         padding: 0;
@@ -63,6 +72,7 @@ const CustomVideoPlayerContainer = styled.div`
         z-index: 1;
         width: 100%;
         height: 100%;
+        overflow: hidden;
     }
 
     .time-img-cap {
@@ -92,10 +102,9 @@ const CustomVideoPlayerContainer = styled.div`
         bottom: 0;
         left: 0;
         right: 0;
-        background-color: white;
+        background-color: tomato;
         height: 20vh;
         width: 1%;
-        opacity: 1.0;
     }
     .time-bar-button {
         width: 100%;
@@ -268,9 +277,7 @@ const CustomVideoPlayer = ({ src, skim }) => {
                 >
                     <source src={src}></source>
                 </video>
-                <div className="video-time-bar">
-                    --
-                </div>
+                <div className="video-time-bar" />
                 <div className="video-cap">
                     <div>
                         <button onClick={onClickPlay}>Play</button>
