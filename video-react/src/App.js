@@ -3,8 +3,11 @@ import { Row, Col, Layout } from 'antd';
 import 'antd/dist/antd.css';
 import styled from 'styled-components';
 
-import videoSource from './video/테스트.mp4';
+// import videoSource1 from './video/테스트.mp4';
+import videoSource1 from './video/유출금지.mov';
+import videoSource2 from './video/뉴스.mov';
 import imageSource from './image/bono.PNG';
+import imageSource2 from './image/download.jpg';
 
 import CustomVideoPlayer from './CustomVideoPlayer';
 
@@ -46,9 +49,8 @@ const App = () => {
       </Layout>
       <Footer>Footer</Footer> */}
       <Row className="border-black" type="flex" justify="center">
-        <Col span={24} className="border-black">
-          <CustomVideoPlayer src={videoSource} skim={imageSource} />
-          <div>test</div>
+        <Col span={15} className="border-black">
+          <CustomVideoPlayer src={videoSource1} skim={imageSource2} />
         </Col>
       </Row>
     </AppContainer>
