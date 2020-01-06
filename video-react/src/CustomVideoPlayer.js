@@ -3,19 +3,24 @@ import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react'
 import styled from 'styled-components';
 
 import PrograssBar from './PrograssBar';
+import playButton from './image/play-01.png';
 
 const CustomVideoPlayerContainer = styled.div`
     overflow: hidden;
+    padding: 10px 10px 10px 10px;
     
     video {
+        position: relative;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
         width: 100%;
+        height: auto;
         padding: 0;
         margin: 0;
-        /* box-shadow: 5px 5px 5px gray; */
+        box-shadow: 0 10px 10px 0 gray;
+        border-radius: 10px 10px 10px 10px;
     }
     div {
         padding: 0;
@@ -28,35 +33,56 @@ const CustomVideoPlayerContainer = styled.div`
 
     .video-container {
         position: relative;
+        /* height: 30vh; */
+        border-radius: 10px 10px 10px 10px;
+        
+    }
+    .video-content {
     }
     
-    .video-time-bar {
-        position: relative;
-        height: 1vh;
-        background-color: tomato;
+    .video-progress-bar {
+        position: absolute;
+        height: 0.5vw;
+        width: 98%;
+        background-color: #FFC2C2;
+        border-radius: 10px 10px 10px 10px;
+        bottom: 0%;
+        left: 1%;
     }
     .video-cap {
         position: absolute;
-        top: 0;
+        display: flex;
+        top: 70%;
         bottom: 0;
-        left: 0;
+        left: 5%;
         right: 0;
         z-index: 2;
-        width: 100%;
-        height: 100%;
-        background-color: black;
+        width: 90%;
+        height: 20%;
+        background-color: #FFC2C2;
         /* background-color: #1D84FF; */
+        border-radius: 10px 10px 10px 10px;
         opacity: 0.8;
-        /* padding: 10px 10px 10px 10px; */
+        padding: 10px 10px 10px 10px;
     }
+    /* .video-cap:hover {
+        opacity: 0.7;
+    } */
 
     /* [1] Timeline Container*/
     .time-line-container {
         position: relative;
+        left: 1%;
+        top: 5px;
         z-index: 0;
         overflow: hidden;
-        height: 20vw;
-        width: 100%;
+        height: 15vw;
+        width: 98%;
+        border-radius: 10px 10px 10px 10px;
+        box-shadow: 0 10px 10px 0 gray;
+        visibility: hidden;
+        /* top: 100px; */
+        /* bottom: 10%; */
         /* border: 20px solid #1D84FF; */
     }
 
@@ -122,8 +148,8 @@ const printProp = (event) => {
     console.log("pageX : ", pageX);
 }
 
-const calculatePercent = (width, x) => {
-    let currentX = (x) / width;
+const calculatePercent = (width, x, timeBarWidth) => {
+    let currentX = (x - timeBarWidth) / (width - timeBarWidth);
     // if (currentX < 0.00) {
     //     currentX = 0.00;
     // } else if (currentX > 1.00) {
@@ -167,8 +193,9 @@ const CustomVideoPlayer = ({ src, skim }) => {
      * [1] 비디오 관련 Functions
      */
     const onClickPlay = useCallback(() => {
+        const { paused } = videoContainer.current;
         const player = videoContainer.current;
-        player.play();
+        paused ? player.play() : player.pause();
         setIsPlayed(!player.paused);
     }, []);
     const onClickPause = useCallback(() => {
@@ -193,6 +220,13 @@ const CustomVideoPlayer = ({ src, skim }) => {
     /**
      * [2] 타임라인 관련 Functions
      */
+    const mouseLeaveInBackground = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        setDraggable(false);
+    }, []);
+    const mouseEnterInBackground = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        // setDraggable(true);
+    }, []);
+
     const mouseUpInBackground = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
         setDraggable(false);
     }, []);
@@ -230,25 +264,52 @@ const CustomVideoPlayer = ({ src, skim }) => {
         event.preventDefault();
     }, []);
 
+    const onTouchStart = (event) => {
+        setDraggable(true);
+    }
+    const onTouchMove = useCallback((event) => {
+        const { target, clientX, currentTarget, nativeEvent, touches, targetTouches, changedTouches } = event;
+        const _event = { _event: currentTarget.offsetParent.offsetParent };
+        console.log(changedTouches);
+        const { offsetLeft } = currentTarget.offsetParent;
+        const { offsetWidth: timelineWidth } = timelineContainer.current;
+        const { offsetWidth: timeBarWidth } = timeBarContainer.current;
+        // const currentX = calculatePercent(timelineWidth, offsetLeft, timeBarWidth);
+        // videoContainer.current.currentTime = currentX * videoDuration;
+
+        // console.log(currentX * videoDuration);
+        // console.log(offsetLeft);
+        // setVideoCurrentTime(currentX * videoDuration);
+    }, [draggable]);
+    const onTouchEnd = (event) => {
+        console.log("onTouchEnd ");
+        setDraggable(false);
+    }
     return (
         <CustomVideoPlayerContainer
             onContextMenu={contextMenuInBackground}
             onMouseMove={mouseMoveInBackground}
             onMouseUp={mouseUpInBackground}
+            onMouseLeave={mouseLeaveInBackground}
+            onMouseEnter={mouseEnterInBackground}
         >
             <div className="video-container">
-                <video
-                    ref={videoContainer}
-                    controls={true}
-                    preload="auto"
-                    onTimeUpdate={onTimeUpdate}
-                    onCanPlay={onCanPlay}
-                >
-                    <source src={src}></source>
-                </video>
+                <div className="video-content">
+                    <video
+                        ref={videoContainer}
+                        controls={false}
+                        preload="auto"
+                        onTimeUpdate={onTimeUpdate}
+                        onCanPlay={onCanPlay}
+                    >
+                        <source src={src}></source>
+                    </video>
+                    <PrograssBar timePercent={timePercent} />
+                </div>
                 <div className="video-cap">
-                    <div>
-                        {isPlayed ? <button onClick={onClickPause}>Pause</button> : <button onClick={onClickPlay}>Play</button>}
+                    <div className="button-container border" onClick={onClickPlay}>
+                        {/* {isPlayed ? <button onClick={onClickPause}>Pause</button> : <button onClick={onClickPlay}>Play</button>} */}
+                        {isPlayed ? <img src={playButton}></img> : <img src={playButton}></img>}
                     </div>
                     <div>
                         <p style={{ "color": "white" }}>진행 시간 : {videoCurrentTime} 초</p>
@@ -260,7 +321,6 @@ const CustomVideoPlayer = ({ src, skim }) => {
                 className="time-line-container"
                 ref={timelineContainer}
             >
-                <PrograssBar timePercent={timePercent} />
                 <div className="time-img-container">
                     <img className="time-img" src={skim} />
                 </div>
@@ -273,6 +333,9 @@ const CustomVideoPlayer = ({ src, skim }) => {
                     <button
                         className="time-bar-button"
                         onMouseDown={mouseDownInBar}
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd}
                     />
                 </div>
             </div>

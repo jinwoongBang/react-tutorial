@@ -2,7 +2,7 @@ import React from 'react';
 
 const PrograssBar = ({ timePercent }) => {
     return (
-        <div className="video-time-bar" style={{ "width": timePercent + "%" }}>
+        <div className="video-progress-bar" style={{ "width": timePercent + "%" }}>
         </div>
     )
 }
