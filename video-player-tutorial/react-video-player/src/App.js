@@ -1,34 +1,53 @@
-import React from 'react';
-import ReactPlayer from 'react-player';
-import { Player } from 'video-react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import videoSource from './video/유출금지.mov';
+import poster from './video/download.jpg';
 
-function App() {
+// [1] react-player
+// import ReactPlayer from 'react-player';
+// [2] video-react
+// import { Player } from 'video-react';
+// [3] video.js
+import VideoPlayer from './VideoPlayer';
+// [4] custom video player
+import CustomVideoPlayer from './CustomVideoPlayer';
+
+
+
+const App = () => {
+
+  // const [player, setPlayer] = useState(null);
+  // const playerContainer = useRef(null);
+
+  // useEffect(() => {
+  //   console.log("player : ", player);
+  //   console.log("playerContainer : ", playerContainer);
+  //   console.log("playerContainer current : ", playerContainer.current);
+  //   setPlayer(playerContainer.current);
+  //   playerContainer.current.play();
+  // });
+
+  // const onPlay = useMemo(() => {
+  //   player.play();
+  // }, []);
+
+  // const videoJsOptions = {
+  //   autoplay: true,
+  //   controls: true,
+  //   sources: [{
+  //     src: videoSource,
+  //     type: 'video/mp4'
+  //   }]
+  // }
+
   return (
     <div>
-      <h1>test</h1>
-      {/* <ReactPlayer playing
-        url={[
-          { src: './유출금지.mov', type: 'video/mp4' },
-        ]}
-        config={{
-          file: {
-            forceVideo: true,
-            attributes: {
-              src: "./유출금지.mov",
-              preload: "auto",
-            }
-          }
-        }}
-      /> */}
-
-      <Player
-        playsInline>
-        {/* <source src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4"></source> */}
-        <source src="/src/유출금지.mov"></source>
-      </Player>
-
+      <div>
+        <h1>Custom</h1>
+        <CustomVideoPlayer src={videoSource} poster={poster}></CustomVideoPlayer>
+      </div>
     </div>
   );
 }
 
 export default App;
+
