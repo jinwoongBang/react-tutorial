@@ -21,7 +21,7 @@ const MalgnPlayerContainer = styled.div`
     -ms-user-select: none; 
     -moz-user-select: none;
     -khtml-user-select: none;
-    -webkit-user-select: none;
+    /* -webkit-user-select: none; */
     user-select: none;
     
     div {
@@ -81,6 +81,13 @@ const MalgnPlayer = ({ src, skim }) => {
         console.log('init Video player');
         return () => {
         }
+    }, [videoOutTime]);
+
+    const onLoadedMetadata = useCallback((player) => {
+        const { duration, readyState } = player;
+        setVideoPlayer(player);
+        setVideoDuration(duration);
+        setVideoOutTime(duration);
     }, []);
 
     /**
@@ -93,10 +100,7 @@ const MalgnPlayer = ({ src, skim }) => {
     }, [videoPlayer]);
 
     const onCanPlay = useCallback((player) => {
-        const { duration, readyState } = player;
-        setVideoPlayer(player);
-        setVideoDuration(duration);
-        setVideoOutTime(duration);
+        console.log("onCanPlay()");
     }, []);
 
     const onTimeUpdate = useCallback((player) => {
@@ -118,43 +122,89 @@ const MalgnPlayer = ({ src, skim }) => {
     /**
      * [2] 타임라인 관련 Functions
      */
-    const mouseDownInTimeline = useCallback(({ nativeEvent, target, currentTarget }) => {
-        const timelineWidth = target.offsetWidth;
+    const mouseDownInTimeline = useCallback((event) => {
+        const { nativeEvent, target, currentTarget } = event;
+        const type = target.attributes.type;
+        console.log("선택된 엘리먼트 : ", { target: target });
+        console.log("이벤트가 설정된 엘리먼트 : ", { currentTarget: currentTarget });
+
+        const barList = currentTarget.lastElementChild.children;
+        const timelineWidth = currentTarget.offsetWidth;
         const { offsetX } = nativeEvent;
-        const barWidth = target.nextSibling.children[0].offsetWidth;
-        const currentPercent = widthToPercent(timelineWidth, offsetX, barWidth);
-        setVideoCurrentTime(currentPercent * videoDuration);
-        videoPlayer.currentTime = currentPercent * videoDuration;
-        console.log("target : ", {target: target});
-        // console.log("currentTarget : ", {currentTarget: currentTarget});
-        // console.log("selected bar : ", target.nextSibling.nextSibling.children[0]);
-        setSelectedBar(target.nextSibling.nextSibling.children[0]);
-        setDraggable(true);
+
+        switch (type) {
+            case undefined:
+                const currentBar = barList[0];
+                const currentPercent = widthToPercent(timelineWidth, offsetX, currentBar.offsetWidth);
+                setVideoCurrentTime(currentPercent * videoDuration);
+                videoPlayer.currentTime = currentPercent * videoDuration;
+                setSelectedBar(currentBar);
+                setDraggable(true);
+                break;
+            case "in":
+                const inBar = barList[0];
+                const inPercent = widthToPercent(timelineWidth, offsetX, currentBar.offsetWidth);
+                setVideoCurrentTime(currentPercent * videoDuration);
+                videoPlayer.currentTime = currentPercent * videoDuration;
+                setSelectedBar(currentBar);
+                setDraggable(true);
+                break;
+            case "out":
+                break;
+            default:
+                break;
+        }
+        // }
+        // const barWidth = currentTarget.lastChildren.children[0].offsetWidth;
+        // const currentPercent = widthToPercent(timelineWidth, offsetX, barWidth);
+        // setVideoCurrentTime(currentPercent * videoDuration);
+        // videoPlayer.currentTime = currentPercent * videoDuration;
+        // // [1] nextSibling => in-Bar
+        // // [2] nextSibling.nextSibling => out-Bar
+        // // [3] nextSibling.nextSibling.nextSibling => current-Bar
+        // setSelectedBar(target.nextSibling.children[0]);
+        // setDraggable(true);
     }, [videoDuration, videoPlayer]);
 
     const mouseDownCurrentBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
-        setDraggable(true);
-        setSelectedBar(target);
+        // setDraggable(true);
+        // setSelectedBar(target);
     }, []);
     const mouseDownInBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
-        setDraggable(true);
-        setSelectedBar(target);
+        // console.log("target : ", {target: target});
+        // setDraggable(true);
+        // setSelectedBar(target);
     }, []);
     const mouseDownOutBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
-        setDraggable(true);
-        setSelectedBar(target);
+        // setDraggable(true);
+        // setSelectedBar(target);
     }, []);
 
-    const mouseMoveInComponent = useCallback(({ nativeEvent, target }) => {
-        if (draggable) {
-            // console.log("selected bar : ", {selectedBar: selectedBar});
-            // console.log("selected attributes : ", selectedBar.attributes);
-            // console.log("nativeEvent : ", nativeEvent.offsetX);
+    const mouseEnter = useCallback((event) => {
+        setDraggable(false);
+    });
+    const mouseLeave = useCallback((event) => {
+        setDraggable(true);
+    });
+
+    const mouseMoveInComponent = useCallback((event) => {
+        const { nativeEvent, target } = event;
+        // const x = nativeEvent.offsetX;
+        // console.log("nativeEvent : ", {nativeEvent: nativeEvent});
+        // console.log("target : ", {target: target});
+        // console.log("nativeEvent : ", nativeEvent)
+        // console.log("test");
+        // console.log({selectedBar: selectedBar})
+        // event.stopPropagation();
+
+        if (draggable && target !== selectedBar) {
+            console.log("test")
             const timelineWidth = target.offsetWidth;
             const barWidth = selectedBar.offsetWidth;
             const x = nativeEvent.offsetX;
             const type = selectedBar.attributes.type.value;
-            console.log(type);
+            // console.log(type);
+            // console.log("nativeEvent : ", {nativeEvent: nativeEvent});
             // console.log("offsetWidth : ", timelineWidth);
             // console.log("barWidth : ", barWidth);
             // console.log("attributes : ", type);
@@ -165,17 +215,14 @@ const MalgnPlayer = ({ src, skim }) => {
                     setVideoCurrentTime(percent * videoDuration);
                     break;
                 case "in":
-                    console.log("In-bar was moved");
                     setVideoInTime(percent * videoDuration);
                     break;
                 case "out":
-                    console.log("out-bar was moved");
                     setVideoOutTime(percent * videoDuration);
                     break;
                 default:
                     break;
             }
-
         }
     }, [draggable, selectedBar, videoDuration, videoPlayer]);
 
@@ -219,12 +266,20 @@ const MalgnPlayer = ({ src, skim }) => {
             onMouseLeave={mouseLeaveComponent}
             onMouseEnter={mouseEnterComponent}
         >
-            <ProgressPrint time={videoCurrentTime} percent={currentTimePercent} />
+            <ProgressPrint
+                currentTime={videoCurrentTime}
+                currentTimePercent={currentTimePercent}
+                inTime={videoInTime}
+                inTimePercent={inTimePercent}
+                outTime={videoOutTime}
+                outTimePercent={outTimePercent}
+            />
             <div className="video-container">
                 <VideoContent
                     src={src}
                     onTimeUpdate={onTimeUpdate}
                     onCanPlay={onCanPlay}
+                    onLoadedMetadata={onLoadedMetadata}
                     percent={currentTimePercent}
                     className=""
                 />
@@ -248,9 +303,11 @@ const MalgnPlayer = ({ src, skim }) => {
                     onMouseDownInBar={mouseDownInBar}
                     onMouseDownOutBar={mouseDownOutBar}
                     onMouseMove={mouseMoveInComponent}
-                // onDrag={onDrag}
-                // onDragStart={onDragStart}
-                // onDragEnd={onDragEnd}
+                    onMouseEnter={mouseEnter}
+                    onMouseLeave={mouseLeave}
+                // setCurrentTimeBar={setCurrentTimeBar}
+                // setInTimeBar={setInTimeBar}
+                // setOutTimeBar={setOutTimeBar}
                 />
             </div>
         </ MalgnPlayerContainer>

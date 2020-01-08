@@ -20,7 +20,13 @@ const VideoContentContainer = styled.div`
     }
 `;
 
-const VideoContent = ({ onTimeUpdate, onCanPlay, src, percent}) => {
+const VideoContent = ({
+        onTimeUpdate,
+        onCanPlay,
+        onLoadedMetadata,
+        src,
+        percent
+    }) => {
     const videoRef = useRef(null);
 
     const onCanPlayVideo = useCallback(() => {
@@ -33,6 +39,12 @@ const VideoContent = ({ onTimeUpdate, onCanPlay, src, percent}) => {
         onTimeUpdate(player);
     }, [onTimeUpdate]);
 
+    const onLoadedVideoMetadata = useCallback(() => {
+        console.log("onLoadedVideoMetadata()");
+        const player = videoRef.current;
+        onLoadedMetadata(player);
+    }, [onLoadedMetadata]);
+
     return (
         <VideoContentContainer>
             <video
@@ -42,6 +54,7 @@ const VideoContent = ({ onTimeUpdate, onCanPlay, src, percent}) => {
                 onTimeUpdate={onTimeUpdateVideo}
                 onCanPlay={onCanPlayVideo}
                 className="radius"
+                onLoadedMetadata={onLoadedVideoMetadata}
             >
                 <source src={src}></source>
             </video>

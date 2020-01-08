@@ -13,14 +13,14 @@ const VideoTimelineBarContainer = styled.div`
     /* border: 2px solid tomato; */
 
     .time-bar {
-        position: relative;
+        position: absolute;
         z-index: 5;
         top: 5%;
         bottom: 0;
         left: 0;
         right: 0;
-        background-color: white;
-        /* background-color: #FFC2C2; */
+        /* background-color: white; */
+        background-color: #FFC2C2;
         height: 90%;
         width: 0.5%;
         opacity: 1.0;
@@ -33,37 +33,69 @@ const VideoTimelineBarContainer = styled.div`
 `;
 
 const VideoTimelineBar = ({
-    percent,
-    onMouseDown,
-    onDragStart,
-    onDragEnd,
-    onDrag,
-    type
-}) => {
+    currentTimePercent,
+    inTimePercent,
+    outTimePercent,
 
-    // const onMouseDownInBar = useCallback((event) => {
-    //     onMouseDown(event);
-    // }, [onMouseDown]);
+    onMouseDownCurrentBar,
+    onMouseDownInBar,
+    onMouseDownOutBar,
+
+    setCurrentTimeBar,
+    setInTimeBar,
+    setOutTimeBar,
+    onMouseEnter,
+    onMouseLeave
+}) => {
+    // const currentTimeBarRef = useRef(null);
+    // const inTimeBarRef = useRef(null);
+    // const outTimeBarRef = useRef(null);
+
+    useEffect(() => {
+        console.log("init bar");
+        // setCurrentTimeBar(currentTimeBarRef.current);
+        // setInTimeBar(inTimeBarRef.current);
+        // setOutTimeBar(outTimeBarRef.current);
+    }, [setCurrentTimeBar, setInTimeBar, setOutTimeBar]);
 
     return (
         <VideoTimelineBarContainer>
             <div
                 className="time-bar radius"
-                style={{ "left": percent + "%" }} 
-                onMouseDown={onMouseDown}
+                style={{ "left": currentTimePercent + "%" }}
+                onMouseDown={onMouseDownCurrentBar}
                 draggable={false}
-                onDrag={onDrag}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                type={type}
+                type="current"
+                // onMouseMove={(event) => {
+                //     event.persist(); 
+                //     event.stopPropagation();
+                //     event.nativeEvent.stopImmediatePropagation();
+                //     console.log("Mouse Move", event.nativeEvent);
+                //     // onMouseEnter();
+                // }}
+                // onMouseEnter={(event) => {
+                //     console.log("Mouse enter", event.nativeEvent);
+                // }}
+                // onMouseOver={(event) => {
+                //     console.log("Mouse Over", event.nativeEvent);
+                // }}
             />
-                {/* <button
-                    className="time-bar-button"
-                // onMouseDown={mouseDownInBar}
-                // onTouchStart={onTouchStart}
-                // onTouchMove={onTouchMove}
-                // onTouchEnd={onTouchEnd}
-                /> */}
+            <div
+                className="time-bar radius"
+                style={{ "left": inTimePercent + "%" }}
+                onMouseDown={onMouseDownInBar}
+                draggable={false}
+                type="in"
+                // ref={inTimeBarRef}
+            />
+            <div
+                className="time-bar radius"
+                style={{ "left": outTimePercent + "%" }}
+                onMouseDown={onMouseDownOutBar}
+                draggable={false}
+                type="out"
+                // ref={outTimeBarRef}
+            />
         </VideoTimelineBarContainer>
     );
 }
