@@ -55,6 +55,9 @@ const VideoContent = ({
                 onCanPlay={onCanPlayVideo}
                 className="radius"
                 onLoadedMetadata={onLoadedVideoMetadata}
+                onPlaying={(event) => {
+                    console.log('playing : ', event);
+                }}
             >
                 <source src={src}></source>
             </video>

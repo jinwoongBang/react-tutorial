@@ -48,7 +48,7 @@ const VideoCover = ({ onClick, isPlayed, button, percent }) => {
     return (
         <VideoCoverContainer>
             <div className="video-button-container" >
-                {isPlayed ? <img src={button.pause} className="video-button" onClick={onClick} /> : <img src={button.play} className="video-button" onClick={onClick} />}
+                {isPlayed ? <img src={button.pause} className="video-button" onClick={onClick} alt="" /> : <img src={button.play} className="video-button" onClick={onClick} alt="" />}
             </div>
             <ProgressBar className="radius" percent={percent} />
         </VideoCoverContainer>

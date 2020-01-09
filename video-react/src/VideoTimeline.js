@@ -4,12 +4,19 @@ import styled from 'styled-components';
 import VideoTimelineBar from './VideoTimelineBar';
 
 import imageSource from './image/ski.JPG';
+import thumbnail from './image/thumbnail.jpg';
+import videoPlayButton from './image/play-button.png';
+import timelinePlayButton from './image/play-button-basic.png';
+import timelinePauseButton from './image/pause-button-basic.png';
+import timelineRedoButton from './image/redo-button-basic.png';
 
 const VideoTimelineContainer = styled.div`
     position: relative;
     z-index: 0;
     height: 14.00vw;
     width: 100%;
+    /* border: 1px solid black; */
+    /* padding: 10px 10px 10px 10px; */
 
     .time-img-container {
         position: relative;
@@ -36,11 +43,11 @@ const VideoTimelineContainer = styled.div`
         bottom: 0;
         left: 0;
         right: 0;
-        z-index: 2;
+        z-index: 3;
         width: 100%;
         height: 100%;
-        background-color: black;
-        opacity: 0.0;
+        /* background-color: black; */
+        opacity: 1.0;
         padding: 10px 10px 10px 10px;
     }
     .in-and-out-container {
@@ -49,37 +56,32 @@ const VideoTimelineContainer = styled.div`
         bottom: 0;
         /* left: 10%; */
         /* right: 10%; */
-        z-index: 3;
+        z-index: 2;
         /* width: 80%; */
         height: 100%;
-        border: 4px solid #FFC2C2;
-        background-color: black;
-        opacity: 0.3;
+        border: 5px solid #FFC2C2;
+        /* background-color: black; */
+        opacity: 1.0;
+        padding: 10px 10px 10px 10px;
     }
-    .in-bar {
-        position: relative;
+    .in-and-out-play-button-container {
+        position: absolute;
         top: 5%;
-        bottom: 0;
-        left: 8.75%;
         right: 0;
-        z-index: 5;
-        width: 2.5%;
-        height: 90%;
-        background-color: #FFC2C2;
-        box-shadow: 0 10px 10px 0 black;
-        border: 1px solid #FFC2C2;
+        z-index: 4;
+        border: 1px solid tomato;
+        
     }
-    .out-bar {
+    .in-and-out-play-button {
         position: relative;
-        top: 0;
-        bottom: 0;
-        left: 90%;
-        right: 0%;
-        z-index: 2;
-        width: 2.5%;
-        height: 100%;
-        border: 2px solid #FFC2C2;
+        height: 2vw;
+        right: -90%;
+        /* top: 30%;
+        left: 20%;
+        z-index: 4;
+        height: 4vw; */
     }
+    
 `;
 
 const VideoTimeline = ({
@@ -91,52 +93,41 @@ const VideoTimeline = ({
     onMouseDownCurrentBar,
     onMouseDownInBar,
     onMouseDownOutBar,
-    onMouseMove,
-    setCurrentTimeBar,
-    setInTimeBar,
-    setOutTimeBar,
+    onMouseMoveInComponent,
+    onMouseMoveInBar,
     onMouseEnter,
-    onMouseLeave
+    onMouseLeave,
+    onPlaySection
 }) => {
 
     const mouseDownInTimeline = useCallback((event) => {
-        // console.log("mouseDownInTimeline()");
         onMouseDownInTimeline(event);
     }, [onMouseDownInTimeline]);
 
     const mouseMoveInComponent = useCallback((event) => {
-        const { nativeEvent } = event;
-        // console.log("nativeEvent : ", nativeEvent.movementX);
-        onMouseMove(event);
-        event.persist();
-        event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
-    }, [onMouseMove]);
+        onMouseMoveInComponent(event);
+    }, [onMouseMoveInComponent]);
 
     const mouseDownInBar = useCallback((event) => {
-        // console.log("mouseDownInBar()");
         onMouseDownInBar(event);
-    });
+    }, [onMouseDownInBar]);
     const mouseDownOutBar = useCallback((event) => {
         onMouseDownOutBar(event);
-    });
+    }, [onMouseDownOutBar]);
     const mouseDownCurrentBar = useCallback((event) => {
         onMouseDownCurrentBar(event);
-    });
-    const mouseOver = useCallback((event) => {
-        const { target, currentTarget } = event;
-        console.log({ target: target });
-        console.log({ currentTarget: currentTarget });
-    });
+    }, [onMouseDownCurrentBar]);
 
     return (
         <VideoTimelineContainer
-            // onMouseOver={mouseOver}
-            onMouseMoveCapture={mouseMoveInComponent}
             onMouseDown={mouseDownInTimeline}
         >
             <div className="time-img-container radius">
-                <img className="time-img" src={imageSource} />
+                <img
+                    className="time-img"
+                    src={imageSource}
+                    alt=""
+                />
             </div>
             <div
                 className="in-and-out-container radius"
@@ -146,7 +137,45 @@ const VideoTimeline = ({
                     "width": (100.00 - inTimePercent - (100.00 - outTimePercent)) + "%"
                 }}
             />
-            <div className="time-img-cover" />
+            <div
+                className="time-img-cover"
+                onMouseMove={mouseMoveInComponent}
+                type="timeline"
+            >
+            </div>
+            {/* <img
+                src={buttonImg}
+                className="in-and-out-play-button"
+                type="play"
+                alt=""
+                style={{
+                    "left": outTimePercent - 10 + "%",
+                }}
+                onClick={onPlaySection}
+            /> */}
+            {/* <div
+                className="in-and-out-play-button-container"
+                style={{
+                    "left": inTimePercent + "%",
+                    "right": (100.00 - outTimePercent) + "%",
+                    "width": (100.00 - inTimePercent - (100.00 - outTimePercent)) + "%"
+                }}
+            >
+                <img
+                    src={timelinePlayButton}
+                    className="in-and-out-play-button"
+                    type="play"
+                    alt=""
+                    onClick={onPlaySection}
+                />
+                <img
+                    src={timelinePauseButton}
+                    className="in-and-out-play-button"
+                    type="play"
+                    alt=""
+                    onClick={onPlaySection}
+                />
+            </div> */}
             <VideoTimelineBar
                 currentTimePercent={currentTimePercent}
                 inTimePercent={inTimePercent}
@@ -154,11 +183,9 @@ const VideoTimeline = ({
                 onMouseDownCurrentBar={mouseDownCurrentBar}
                 onMouseDownInBar={mouseDownInBar}
                 onMouseDownOutBar={mouseDownOutBar}
-                // setCurrentTimeBar={setCurrentTimeBar}
-                // setInTimeBar={setInTimeBar}
-                // setOutTimeBar={setOutTimeBar}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
+                onMouseMoveInBar={onMouseMoveInBar}
             />
         </VideoTimelineContainer>
     );
