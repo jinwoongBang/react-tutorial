@@ -10,8 +10,9 @@ import ProgressBar from './ProgressBar';
 
 
 import playButton from './image/play01.png';
-import playButton1 from './image/play-button.png';
+import playButton1 from './image/play-button-white-08.png';
 import pauseButton from './image/pause02.png';
+import pauseButton1 from './image/play-button-white-09.png';
 
 const MalgnPlayerContainer = styled.div`
     padding: 20px 20px 20px 20px;
@@ -336,8 +337,10 @@ const MalgnPlayer = ({ src, skim }) => {
                     className="radius"
                     onClick={onPlayFull}
                     isPlayed={isPlayed}
-                    button={{ play: playButton1, pause: pauseButton }}
+                    button={{ play: playButton1, pause: pauseButton1 }}
                     percent={currentTimePercent}
+                    currentTime={videoCurrentTime}
+                    duration={videoDuration}
                 />
 
             </div>
