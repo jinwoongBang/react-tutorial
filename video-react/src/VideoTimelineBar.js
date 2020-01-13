@@ -48,15 +48,22 @@ const VideoTimelineBar = ({
     onMouseDownInBar,
     onMouseDownOutBar,
 
+    onMouseMoveInBar,
+
     setCurrentTimeBar,
     setInTimeBar,
     setOutTimeBar,
-    onMouseMoveInBar
 }) => {
 
+    const currentRef = useRef(null);
+    const inRef = useRef(null);
+    const outRef = useRef(null);
+
     useEffect(() => {
-        console.log("init bar");
-    }, []);
+        setCurrentTimeBar(currentRef.current);
+        setInTimeBar(inRef.current);
+        setOutTimeBar(outRef.current);
+    }, [setCurrentTimeBar, setInTimeBar, setOutTimeBar]);
 
     const mouseMoveInBar = useCallback(({ target, currentTarget, nativeEvent }) => {
         if (nativeEvent.movementX > 0) {
@@ -76,6 +83,7 @@ const VideoTimelineBar = ({
                 onMouseDown={onMouseDownCurrentBar}
                 draggable={false}
                 type="current"
+                ref={currentRef}
             />
             <div
                 className="time-bar in-bar radius"
@@ -83,6 +91,7 @@ const VideoTimelineBar = ({
                 onMouseDown={onMouseDownInBar}
                 draggable={false}
                 type="in"
+                ref={inRef}
             />
             <div
                 className="time-bar out-bar radius"
@@ -90,6 +99,7 @@ const VideoTimelineBar = ({
                 onMouseDown={onMouseDownOutBar}
                 draggable={false}
                 type="out"
+                ref={outRef}
             />
         </VideoTimelineBarContainer>
     );

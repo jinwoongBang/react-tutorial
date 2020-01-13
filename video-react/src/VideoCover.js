@@ -29,6 +29,16 @@ const VideoCoverContainer = styled.div`
             opacity: 0.0;
         }
     }
+    .video-overall-cover {
+        position: absolute;
+        z-index: 3;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(0, 0, 0, 0.8);
+        text-align: center;
+        color: white;
+    }
+
     .video-top-cover {
         position: relative;
         z-index: 2;
@@ -36,12 +46,12 @@ const VideoCoverContainer = styled.div`
         width: 100%;
         height: 80%;
         overflow: hidden;
-        /* border: 1px solid tomato; */
+        border: 1px solid tomato;
     }
     .video-top-button-container {
         position: relative;
         transition: opacity .5s linear;
-        /* border: 1px solid tomato; */
+        border: 1px solid tomato;
         top: 50%;
         width: 100%;
         left: 0%;
@@ -66,6 +76,27 @@ const VideoCoverContainer = styled.div`
         height: 5vw;
     }
 
+    .video-top-notification-container {
+        position: relative;
+        border: 1px solid tomato;
+        top: 50%;
+        width: 100%;
+        height: 10vw;
+        left: 0%;
+        /* background-color: rgb(0, 0, 0, 0.8); */
+        color: white;
+        text-align: center;
+    }
+    .video-top-notification {
+        position: relative;
+        transition: opacity .5s linear;
+        left: 43%;
+        /* background-color: red; */
+        background-color: rgb(0, 0, 0, 0.8);
+        width: 10vw;
+        height: 100%;
+        border: 1px solid tomato;
+    }
     
     .video-bottom-cover {
         position: relative;
@@ -88,12 +119,12 @@ const VideoCoverContainer = styled.div`
         width: 95%;
         top: 53%;
         left: 2.5%;
-        /* border: 1px solid tomato; */
+        border: 1px solid tomato;
     }
     .video-bottom-button-container {
         position: relative;
         /* left: 10%; */
-        /* border: 1px solid tomato; */
+        border: 1px solid tomato;
     }
     .video-bottom-button-container > img {
         width: 2vw;
@@ -101,13 +132,13 @@ const VideoCoverContainer = styled.div`
     .video-bottom-volume-container {
         width: 10%;
     }
+    
     .video-time-container {
         position: relative;
-        width: 10%;
+        width: 50%;
         top: 40%;
         left: 2.5%;
-        /* border: 1px solid tomato; */
-        font-size: 1.0em;
+        border: 1px solid tomato;
         color: white;
     }
     .video-time {
@@ -141,7 +172,8 @@ const VideoCover = ({
     percent,
     duration,
     currentTime,
-    volume
+    volume,
+    readyState
 }) => {
 
     const onPlayInTopCover = useCallback((event) => {
@@ -157,14 +189,15 @@ const VideoCover = ({
     }, [onChangeVolume]);
 
     return (
-        <VideoCoverContainer >
+        <VideoCoverContainer>
+            {readyState ? null : <div className="video-overall-cover">Loading...</div>}
             <div
                 className="video-top-cover"
                 onClick={onPlayInTopCover}
             >
                 <div
                     className={[
-                        'video-top-button-container', 
+                        'video-top-button-container',
                         isPlayed && 'click'
                     ].join(' ')}
                 >
@@ -172,6 +205,16 @@ const VideoCover = ({
                         ? <img src={button.pause} alt="" />
                         : <img src={button.play} alt="" />
                     }
+                </div>
+                <div
+                    className={[
+                        'video-top-notification-container',
+                        isPlayed && 'click'
+                    ].join(' ')}
+                >
+                    <div className="video-top-notification">
+                        In Time Bar
+                    </div>
                 </div>
             </div>
 
@@ -189,9 +232,9 @@ const VideoCover = ({
                     <div className="video-bottom-button-container">
                         {volume === 0
                             ? <img src={button.volumes[0]} alt="" onClick={onChangeVideoVolume} />
-                            : <img src={button.volumes[1]} alt="" onClick={onMuteVideoVolume}/>
+                            : <img src={button.volumes[1]} alt="" onClick={onMuteVideoVolume} />
                         }
-                        
+
                     </div>
                     <div className="video-bottom-volume-container">
                         <ProgressBar

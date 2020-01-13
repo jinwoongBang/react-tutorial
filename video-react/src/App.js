@@ -52,7 +52,7 @@ const App = () => {
       <Footer>Footer</Footer> */}
       <Row className="border-black" type="flex" justify="center">
         <Col span={15} className="">
-          <MalgnPlayer src={videoSource2} skim={imageSource} />
+          <MalgnPlayer src={videoSource1} skim={imageSource} />
         </Col>
       </Row>
     </AppContainer>

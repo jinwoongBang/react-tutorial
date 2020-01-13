@@ -60,7 +60,8 @@ const VideoTimelineContainer = styled.div`
         bottom: 0;
         z-index: 2;
         height: 100%;
-        border: 4px solid rgb(255,255,255, 0.5);
+        /* border: 4px solid rgb(255,255,255, 0.5); */
+        border: 4px solid rgb(255, 8, 0, 0.5);
         /* border: 5px solid #FFC2C2; */
         opacity: 1.0;
         border-radius: 0 0 10px 10px;
@@ -94,9 +95,15 @@ const VideoTimeline = ({
     onMouseDownOutBar,
     onMouseMoveInComponent,
     onMouseMoveInBar,
-    onMouseEnter,
-    onMouseLeave,
-    onPlaySection
+    onPlaySection,
+
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+
+    setCurrentTimeBar,
+    setInTimeBar,
+    setOutTimeBar,
 }) => {
 
     const mouseDownInTimeline = useCallback((event) => {
@@ -120,6 +127,8 @@ const VideoTimeline = ({
     return (
         <VideoTimelineContainer
             onMouseDown={mouseDownInTimeline}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
         >
             <div className="time-img-container">
                 <img
@@ -133,25 +142,17 @@ const VideoTimeline = ({
                 style={{
                     "left": inTimePercent + "%",
                     "right": (100.00 - outTimePercent) + "%",
-                    "width": (100.00 - inTimePercent - (100.00 - outTimePercent)) + "%"
+                    "width": (outTimePercent - inTimePercent) + "%"
                 }}
             />
             <div
                 className="time-img-cover"
                 onMouseMove={mouseMoveInComponent}
+                
+                onTouchEnd={onTouchEnd}
                 type="timeline"
             >
             </div>
-            {/* <img
-                src={buttonImg}
-                className="in-and-out-play-button"
-                type="play"
-                alt=""
-                style={{
-                    "left": outTimePercent - 10 + "%",
-                }}
-                onClick={onPlaySection}
-            /> */}
             <div
                 className="in-and-out-play-button-container"
                 style={{
@@ -172,7 +173,7 @@ const VideoTimeline = ({
                     alt=""
                     onClick={onPlaySection}
                 />)}
-                
+
             </div>
             <VideoTimelineBar
                 currentTimePercent={currentTimePercent}
@@ -181,9 +182,10 @@ const VideoTimeline = ({
                 onMouseDownCurrentBar={mouseDownCurrentBar}
                 onMouseDownInBar={mouseDownInBar}
                 onMouseDownOutBar={mouseDownOutBar}
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
                 onMouseMoveInBar={onMouseMoveInBar}
+                setCurrentTimeBar={setCurrentTimeBar}
+                setInTimeBar={setInTimeBar}
+                setOutTimeBar={setOutTimeBar}
             />
         </VideoTimelineContainer>
     );

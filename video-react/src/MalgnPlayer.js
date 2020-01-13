@@ -28,11 +28,20 @@ const MalgnPlayerContainer = styled.div`
     -khtml-user-select: none;
     /* -webkit-user-select: none; */
     user-select: none;
-    
-    /* div {
-        padding: 0;
-        margin: 0;
-    } */
+    font-size: 1em;
+
+    @media (min-width: 768px) and (max-width: 991px) {
+        font-size: 0.8em;
+    }
+    @media (min-width: 576px) and (max-width: 767px) {
+        font-size: 0.7em;
+    }
+    @media (min-width: 375px) and (max-width: 575px) {
+        font-size: 0.6em;
+    }
+    @media (max-width: 374px) {
+        font-size: 0.5em;
+    }
 
     .border {
         border: 1px solid tomato;
@@ -42,59 +51,51 @@ const MalgnPlayerContainer = styled.div`
     }
     .video-container {
         position: relative;
-        /* width: auto; */
-        
-        /* border: 1px solid tomato; */
     }
     .timeline-container {
         position: relative;
         height: 14vw;
-        /* border: 1px solid tomato; */
     }
 `;
 
-const printProp = (event) => {
-    const { screenX, clientX, pageX, target, currentTarget } = event;
-    console.log("Mouse Down : ", event);
-    console.log("screenX : ", screenX);
-    console.log("clientX : ", clientX);
-    console.log("pageX : ", pageX);
-}
-
 const calculateWidthToPercent = (overallWidth, mouseX, barWidth, type) => {
-    let currentX = 0.00;
+    let percent = 0.00;
     switch (type) {
         case "left":
-            // console.log("left");
-            currentX = (mouseX + barWidth * 0.6) / (overallWidth);
+            percent = (mouseX + barWidth * 0.6) / (overallWidth);
             break;
         case "right":
-            // console.log("right");
-            currentX = (mouseX - barWidth) / (overallWidth);
+            percent = (mouseX - barWidth) / (overallWidth);
             break;
         case "center":
-            // console.log("center");
-            currentX = (mouseX - barWidth) / (overallWidth);
+            percent = (mouseX - barWidth) / (overallWidth);
             break;
         default:
             break;
     }
 
-    if (currentX < 0.00) {
-        currentX = 0.00;
-    } else if (currentX > 1.00) {
-        currentX = 1.00;
+    if (percent < 0.00) {
+        percent = 0.00;
+    } else if (percent > 1.00) {
+        percent = 1.00;
     }
 
-    return currentX;
+    return percent;
 }
 
+/**
+ * 
+ * @param {*} param0 
+ */
 const MalgnPlayer = ({ src, skim }) => {
 
-    const keyCodeRef = useRef(null);
-
-    const [videoPlayMode, setVideoPlayMode] = useState("full");
+    /*
+     * [1] Web 상태
+     */
     const [videoPlayer, setVideoPlayer] = useState(null);
+    const [videoReadyState, setVideoReadyState] = useState(false);
+    // "full" : 전체 재생, "section" : 구간 재생
+    const [videoPlayMode, setVideoPlayMode] = useState("full");
     const [draggable, setDraggable] = useState(false);
     const [selectedBar, setSelectedBar] = useState(null);
     const [isPlayed, setIsPlayed] = useState(false);
@@ -104,14 +105,31 @@ const MalgnPlayer = ({ src, skim }) => {
     const [videoOutTime, setVideoOutTime] = useState(0.00);
     const [videoDuration, setVideoDuration] = useState(0.00);
     const [videoVolume, setVideoVolume] = useState(0.00);
-
+    const [timeControlVolume, setTimeControlVolume] = useState(1);
+    // "center" : 타임라인을 클릭하여 현재 시간을 변경 할 경우
+    // "left"   : 시간 표시 막대를 왼쪽으로 움직이는 중
+    // "right"   : 시간 표시 막대의 오른쪽으로 움직이는 중
     const [moveTypeInBar, setMoveTypeInBar] = useState("center");
+    const [currentTimeBar, setCurrentTimeBar] = useState(null);
+    const [inTimeBar, setInTimeBar] = useState(null);
+    const [outTimeBar, setOutTimeBar] = useState(null);
+
+    /*
+     * [2] Mobile 상태
+     */
+    const [touchStartX, setTouchStartX] = useState(0);
+    const [touchStartPercent, setTouchStartPercnet] = useState(0);
 
     // useEffect(() => {
     //     console.log('in : ', videoInTime);
     //     return () => {
     //     }
     // }, [videoInTime]);
+    // useEffect(() => {
+    //     console.log('selectedBar : ', selectedBar);
+    //     return () => {
+    //     }
+    // }, [selectedBar]);
     // useEffect(() => {
     //     console.log('out : ', videoOutTime);
     //     return () => {
@@ -125,6 +143,7 @@ const MalgnPlayer = ({ src, skim }) => {
     // useEffect(() => {
     //     console.log('videoPlayer : ', videoPlayer);
     //     return () => {
+    //         console.log("test");
     //     }
     // }, [videoPlayer]);
     // useEffect(() => {
@@ -133,28 +152,35 @@ const MalgnPlayer = ({ src, skim }) => {
     //     }
     // }, [videoDuration]);
 
+    /**
+     * [0] 비디오 메타데이터 최초 로드 및 상태 초기화(init)
+     */
     const onLoadedMetadata = useCallback((player) => {
         const { duration, readyState, volume } = player;
-        console.log("player : ", { player: player });
         setVideoPlayer(player);
         setVideoDuration(duration);
         setVideoOutTime(duration);
         setVideoVolume(volume);
+        setVideoReadyState(true);
     }, []);
 
     /**
-     * [1] 비디오 관련 Functions
+     * [1] 비디오 재생 관련 Functions
+     */
+
+    /*
+     * [1-1] 전체 재생 (full play)
      */
     const onPlayFull = useCallback((event) => {
         const { paused } = videoPlayer;
         paused ? videoPlayer.play() : videoPlayer.pause();
         setIsPlayed(!videoPlayer.paused);
         setVideoPlayMode("full");
-        if (event) {
-            console.log({ event: event });
-        }
     }, [videoPlayer]);
 
+    /*
+     * [1-2] 구간 재생 (section play)
+     */
     const onPlaySection = useCallback(() => {
         const { paused } = videoPlayer;
         if (paused) {
@@ -168,12 +194,12 @@ const MalgnPlayer = ({ src, skim }) => {
         setVideoPlayMode("section");
     }, [videoInTime, videoPlayer]);
 
-    const onCanPlay = useCallback((player) => {
-        // console.log("onCanPlay()");
-    }, []);
-
+    /*
+     * [1-3] 현재 재생 중인 시간 상태 업데이트
+     */
     const onTimeUpdate = useCallback((player) => {
         setVideoCurrentTime(player.currentTime);
+        // 구간 재생일 경우 Out Time 에서 일시정지
         if (videoPlayMode === "section") {
             if (player.currentTime > videoOutTime) {
                 player.pause();
@@ -183,6 +209,9 @@ const MalgnPlayer = ({ src, skim }) => {
 
     }, [videoOutTime, videoPlayMode]);
 
+    /*
+     * [1-4] 비디오 진행률 계산
+     */
     const currentTimePercent = useMemo(() => {
         return videoCurrentTime / videoDuration * 100;
     }, [videoCurrentTime, videoDuration]);
@@ -195,84 +224,66 @@ const MalgnPlayer = ({ src, skim }) => {
         return videoOutTime / videoDuration * 100;
     }, [videoOutTime, videoDuration]);
 
+    const controlVolume = useMemo(() => {
+
+    }, []);
     /**
-     * [2] 타임라인 관련 Functions
+     * [2] Client Event 관련 Functions
+     */
+
+    /*
+     * [2-1] 타임라인에서 클릭 이벤트 발생
      */
     const mouseDownInTimeline = useCallback(({ nativeEvent, target, currentTarget }) => {
-
-        // const { nativeEvent, target, currentTarget } = event;
-        // console.log("outter Event : ", barType);
         const type = target.attributes.type.value;
-        const barList = currentTarget.lastElementChild.children;
-        const timelineWidth = currentTarget.offsetWidth;
-        const { offsetX } = nativeEvent;
-        const percent = calculateWidthToPercent(
-            timelineWidth, offsetX, barList[0].offsetWidth, moveTypeInBar
-        );
-        // setVideoCurrentTime(percent * videoDuration);
-        // videoPlayer.currentTime = percent * videoDuration;
-        // setSelectedBar(barList[0]);
-        switch (type) {
-            case "timeline": {
-                // console.log("timeline");
-                setVideoCurrentTime(percent * videoDuration);
-                videoPlayer.currentTime = percent * videoDuration;
-                setSelectedBar(barList[0]);
-                break;
-            }
-            case "current": {
-                // console.log("current");
-                setSelectedBar(barList[0]);
-                break;
-            }
-            case "in": {
-                // console.log("in");
-                setSelectedBar(barList[1]);
-                break;
-            }
-            case "out": {
-                // console.log("out");
-                setSelectedBar(barList[2]);
-                break;
-            }
-            default:
-                break;
+        if (type === "timeline") {
+            // const currentTimeBar = currentTarget.lastElementChild.firstElementChild;
+            const timelineWidth = currentTarget.offsetWidth;
+            const { offsetX } = nativeEvent;
+            const percent = calculateWidthToPercent(
+                timelineWidth, offsetX, currentTimeBar.offsetWidth, moveTypeInBar
+            );
+            setVideoCurrentTime(percent * videoDuration);
+            videoPlayer.currentTime = percent * videoDuration;
+            setSelectedBar(currentTimeBar);
+            setDraggable(true);
         }
 
-        setDraggable(true);
-    }, [moveTypeInBar, videoDuration, videoPlayer]);
+    }, [currentTimeBar, moveTypeInBar, videoDuration, videoPlayer]);
 
+    /*
+     * [2-2] 현재 시간 막대를 클릭
+     */
     const mouseDownCurrentBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
-        console.log("mouseDownCurrentBar");
-        // setDraggable(true);
-        // setSelectedBar(target);
-    }, []);
-    const mouseDownInBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
-        console.log("mouseDownInBar");
-        // console.log("target : ", { target: target });
-        // setDraggable(true);
-        // setSelectedBar(target);
-    }, []);
-    const mouseDownOutBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
-        // console.log("target : ", {target: target});
-        console.log("mouseDownOutBar");
-        // setDraggable(true);
-        // setSelectedBar(target);
-    }, []);
-
-    const mouseEnter = useCallback((event) => {
-        setDraggable(false);
-    }, []);
-    const mouseLeave = useCallback((event) => {
         setDraggable(true);
+        setSelectedBar(currentTarget);
     }, []);
-
+    /*
+     * [2-3] In Time 막대를 클릭
+     */
+    const mouseDownInBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        setDraggable(true);
+        setSelectedBar(currentTarget);
+    }, []);
+    /*
+     * [2-4] Out Time 막대를 클릭
+     */
+    const mouseDownOutBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        setDraggable(true);
+        setSelectedBar(currentTarget);
+    }, []);
+    /*
+     * [2-5] Out Time 막대를 클릭
+     */
     const mouseMoveInBar = useCallback((type) => {
         if (draggable) {
             setMoveTypeInBar(type);
         }
     }, [draggable]);
 
+    /*
+     * [2-6] 선택된 막대의 위치를 변경 (막대 드래그) 
+     */
     const mouseMoveInComponent = useCallback((event) => {
         const { nativeEvent, target, currentTarget } = event;
         if (draggable) {
@@ -281,7 +292,6 @@ const MalgnPlayer = ({ src, skim }) => {
             const barWidth = selectedBar.offsetWidth;
             const x = nativeEvent.offsetX;
             const type = selectedBar.attributes.type.value;
-            console.log("type : ", type);
             switch (type) {
                 case "current": {
                     const percent = calculateWidthToPercent(timelineWidth, x, barWidth, moveType);
@@ -291,47 +301,63 @@ const MalgnPlayer = ({ src, skim }) => {
                 }
                 case "in": {
                     const percent = calculateWidthToPercent(timelineWidth, x, barWidth, moveType);
-                    setVideoInTime(percent * videoDuration);
+                    let time = percent * videoDuration > videoOutTime ? videoOutTime : percent * videoDuration;
+                    videoPlayer.currentTime = time;
+                    setVideoInTime(time);
                     break;
                 }
                 case "out": {
                     const percent = calculateWidthToPercent(timelineWidth, x, barWidth, moveType);
-                    setVideoOutTime(percent * videoDuration);
+                    let time = percent * videoDuration < videoInTime ? videoInTime : percent * videoDuration;
+                    videoPlayer.currentTime = time;
+                    setVideoOutTime(time);
                     break;
                 }
                 default:
                     break;
             }
         }
-    }, [selectedBar, draggable, moveTypeInBar, videoDuration, videoPlayer]);
+    }, [draggable, moveTypeInBar, selectedBar, selectedBar, videoPlayer, videoDuration, videoOutTime, videoInTime]);
 
-    const mouseLeaveComponent = useCallback(({ screenX, clientX, pageX, target, currentTarget, nativeEvent }) => {
+    const onTouchStart = useCallback((event) => {
+    }, []);
+    const onTouchMove = useCallback((event) => {
+    }, []);
+    const onTouchEnd = useCallback((event) => {
+    }, []);
+
+    /*
+     * [2-7] 타임라인 '안' 에서 Mouse Up
+     */
+    const mouseUpInComponent = useCallback(() => {
+        setDraggable(false);
+        setMoveTypeInBar("center");
+    }, []);
+
+    /*
+     * [2-8] 타임라인 '밖' 에서 Mouse Up
+     */
+    const mouseLeaveComponent = useCallback(() => {
         if (draggable) {
             window.addEventListener("mouseup", (event) => {
                 setDraggable(false);
+                setMoveTypeInBar("center");
             })
         }
     }, [draggable]);
 
-    const mouseEnterComponent = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
-        if (draggable) {
-            // console.log("mouseLeaveInBackground");
-        }
-    }, [draggable]);
-
-    const mouseUpInComponent = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
-        setDraggable(false);
-    }, []);
-
+    /*
+     * [2-9] 우클릭 방지
+     */
     const contextMenuInComponent = useCallback((event) => {
-        // event.preventDefault();
+        event.preventDefault();
     }, []);
 
-    const mouseDownInVolume = useCallback((event) => {
+    const mouseDownInVolume = useCallback(() => {
         console.log("mouseDownInVolume()");
     });
 
-    const mouseMoveInVideo = useCallback((event) => {
+    const mouseMoveInVideo = useCallback(() => {
         console.log("mouseMoveInVideo()");
     });
     const changeVolume = useCallback((event, volume) => {
@@ -340,70 +366,155 @@ const MalgnPlayer = ({ src, skim }) => {
         setVideoVolume(volume * 100.00);
     }, [videoPlayer]);
 
-    const keyPress = useCallback((event) => {
-        console.log(event.keyCode);
-        let type = "current";
-        if(selectedBar) {
+    // shiftKey, altKey, ctrlKey
+    // i = 73, o = 79, MacFunction = 91
+    const keyDown = useCallback((event) => {
+        const { keyCode, ctrlKey, altKey, shiftKey, target, currentTarget } = event;
+        console.log({ keyCode: keyCode });
+        let type = null;
+        if (selectedBar === null) {
+            type = "current";
+        } else {
             type = selectedBar.attributes.type.value;
         }
-        const keyCode = keyCodeRef.current;
-        keyCode.value = "";
-        let code = event.keyCode;
-        switch (code) {
+
+        // ['shift']
+        if (shiftKey) {
+            switch (keyCode) {
+                // ['c']
+                case 67: {
+                    setSelectedBar(currentTimeBar);
+                    break;
+                }
+                // ['i']
+                case 73: {
+                    setSelectedBar(inTimeBar);
+                    videoPlayer.currentTime = videoInTime;
+                    break;
+                }
+
+                // ['o']
+                case 79: {
+                    setSelectedBar(outTimeBar);
+                    videoPlayer.currentTime = videoOutTime;
+                    break;
+                }
+
+                default:
+                    break;
+            }
+        }
+
+        switch (keyCode) {
+            // [스페이스 바]
             case 32: {
-                setIsPlayed(videoPlayer.paused);
-                if(videoPlayer.paused) {
+                const { paused } = videoPlayer;
+                if (paused) {
+                    setIsPlayed(paused);
                     videoPlayer.play();
                 } else {
+                    setIsPlayed(paused);
                     videoPlayer.pause();
-                }      
+                }
                 break;
             }
+            // [왼쪽 방향키]
             case 37: {
-                if(type === "current") {
-                    videoPlayer.currentTime = videoPlayer.currentTime - 10.00;
-                    setVideoCurrentTime(videoPlayer.currentTime - 10.00);
+                if (type === "current") {
+                    videoPlayer.currentTime -= timeControlVolume;
                 }
-                if(type === "in") {
-                    setVideoInTime(videoInTime - 10.00);
+                if (type === "in") {
+                    let time = videoInTime - timeControlVolume;
+                    if (time <= 0) {
+                        time = 0;
+                    }
+                    videoPlayer.currentTime = time;
+                    setVideoInTime(time);
                 }
-                if(type === "out") {
-                    setVideoOutTime(videoInTime - 10.00);
+                if (type === "out") {
+                    let time = videoOutTime - timeControlVolume;
+                    if (time <= videoInTime) {
+                        time = videoInTime;
+                    }
+                    videoPlayer.currentTime = time;
+                    setVideoOutTime(time);
                 }
-                
-                
                 break;
             }
+            // [위 방향키]
+            case 38: {
+                let timeControl = parseFloat((timeControlVolume + 0.1).toFixed(2));
+
+                setTimeControlVolume(timeControl);
+                break;
+            }
+            // [오른쪽 방향키]
             case 39: {
-                videoPlayer.currentTime =  videoPlayer.currentTime + 10.00;
-                setVideoCurrentTime( videoPlayer.currentTime + 10.00);
+                if (type === "current") {
+                    videoPlayer.currentTime += timeControlVolume;
+                }
+                if (type === "in") {
+                    let time = videoInTime + timeControlVolume;
+                    if (time >= videoOutTime) {
+                        time = videoOutTime;
+                    }
+                    videoPlayer.currentTime = time;
+                    setVideoInTime(time);
+                }
+                if (type === "out") {
+                    let time = videoOutTime + timeControlVolume
+                    if (time >= videoDuration) {
+                        time = videoDuration;
+                    }
+                    videoPlayer.currentTime = time;
+                    setVideoOutTime(time);
+                }
+
                 break;
             }
+            // [아래 방향키]
+            case 40: {
+                let timeControl = parseFloat((timeControlVolume - 0.1).toFixed(2));
+                if (timeControl <= 0) {
+                    timeControl = 0;
+                }
+                setTimeControlVolume(timeControl);
+                break;
+            }
+
             default:
                 break;
         }
-    }, [selectedBar, videoPlayer]);
+    }, [currentTimeBar, inTimeBar, outTimeBar, selectedBar, timeControlVolume, videoDuration, videoInTime, videoOutTime, videoPlayer]);
 
-    const onFocus = useCallback(() => {
-        console.log("onFocus");
-        const keyCode = keyCodeRef.current;
-        keyCode.focus();
-    }, []);
+    const onWheel = useCallback((event) => {
+        const { deltaX, deltaY, deltaZ, nativeEvent } = event;
+        let timeControl = parseFloat((timeControlVolume + deltaY * 0.1).toFixed(2))
+        if (timeControl <= 0) {
+            timeControl = 0;
+        }
+        setTimeControlVolume(timeControl);
+    }, [timeControlVolume]);
 
     return (
         <MalgnPlayerContainer
             onContextMenu={contextMenuInComponent}
             onMouseUp={mouseUpInComponent}
             onMouseLeave={mouseLeaveComponent}
-            onMouseEnter={mouseEnterComponent}
-            onClick={onFocus}
+            onWheel={onWheel}
+            onKeyDown={keyDown}
+            onScroll={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+            }}
+            tabIndex="0"
         >
-            <input
-                type="test"
+            {/* <input
+                type="text"
                 style={{ "opacity": "1.0" }}
                 onKeyDown={keyPress}
                 ref={keyCodeRef}
-            />
+            /> */}
             <ProgressPrint
                 currentTime={videoCurrentTime}
                 currentTimePercent={currentTimePercent}
@@ -411,12 +522,13 @@ const MalgnPlayer = ({ src, skim }) => {
                 inTimePercent={inTimePercent}
                 outTime={videoOutTime}
                 outTimePercent={outTimePercent}
+                timeControlVolume={timeControlVolume}
+                selectedBar={selectedBar}
             />
             <div className="video-container">
                 <VideoContent
                     src={src}
                     onTimeUpdate={onTimeUpdate}
-                    onCanPlay={onCanPlay}
                     onLoadedMetadata={onLoadedMetadata}
                     percent={currentTimePercent}
                     className=""
@@ -441,6 +553,7 @@ const MalgnPlayer = ({ src, skim }) => {
                     currentTime={videoCurrentTime}
                     duration={videoDuration}
                     volume={videoVolume}
+                    readyState={videoReadyState}
                 />
 
             </div>
@@ -457,13 +570,15 @@ const MalgnPlayer = ({ src, skim }) => {
                     onMouseDownOutBar={mouseDownOutBar}
                     onMouseMoveInComponent={mouseMoveInComponent}
                     onMouseMoveInBar={mouseMoveInBar}
-                    onMouseEnter={mouseEnter}
-                    onMouseLeave={mouseLeave}
                     onPlaySection={onPlaySection}
 
-                // setCurrentTimeBar={setCurrentTimeBar}
-                // setInTimeBar={setInTimeBar}
-                // setOutTimeBar={setOutTimeBar}
+                    onTouchStart={onTouchStart}
+                    onTouchMove={onTouchMove}
+                    onTouchEnd={onTouchEnd}
+
+                    setCurrentTimeBar={setCurrentTimeBar}
+                    setInTimeBar={setInTimeBar}
+                    setOutTimeBar={setOutTimeBar}
                 />
             </div>
         </ MalgnPlayerContainer>
