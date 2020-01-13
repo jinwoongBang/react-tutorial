@@ -3,46 +3,68 @@ import styled from 'styled-components';
 
 const ProgressBarContainer = styled.div`
     position: relative;
-    top: 20%;
-    left: 0%;
-    width: 100%;
-    height: 0.6vh;
+    top: 40%;
+    left: 2.5%;
+    width: 95%;
+    height: 0.2vw;
     z-index: 4;
     /* border: 1px solid black; */
-    border-radius: 10px 10px 10px 10px;
+    /* border-radius: 10px 10px 10px 10px; */
     background-color: rgb(255,255,255, 0.3);
-    box-shadow: 0 2px 2px 0 gray;
+    /* box-shadow: 0 2px 2px 0 gray; */
+    padding: 0;
     
 
     .video-progress-bar {
-        position: relative;
+        position: absolute;
         top: 0;
         width: 0%;
         height: 100%;
         /* background-color: #FFC2C2; */
-        background-color: red;
+        /* background-color: red; */
         border-radius: 10px 10px 10px 10px;
         opacity: 1.0 !important;
         /* box-shadow: 0 2px 2px 0 gray; */
     }
     .video-current-point {
-        position: relative;
-        bottom: 5px;
-        left: 100%;
-        width: 1vw;
-        height: 1vw;
+        position: absolute;
+        top: -50%;
+        /* left: 99%; */
+        width: 0.6vw;
+        height: 0.6vw;
         border-radius: 100px 100px 100px 100px;
-        background-color: red;
+        /* background-color: red; */
     }
 `;
 
-const ProgressBar = ({ percent }) => {
+const ProgressBar = ({
+    percent,
+    color,
+    onMouseDown
+}) => {
     return (
-        <ProgressBarContainer className="">
-            <div className="video-progress-bar" style={{ "width": percent + "%" }}>
-                <div className="video-current-point"></div>
-            </div>
-            
+        <ProgressBarContainer
+            onMouseDown={(event) => {
+                const { target, currentTarget } = event;
+                console.log({target: target});
+                console.log({currentTarget: currentTarget});
+            }}
+        >
+            <div
+                className="video-progress-bar"
+                style={{
+                    "width": percent + "%",
+                    "backgroundColor": color
+                }}
+            />
+            <div
+                className="video-current-point"
+                style={{
+                    "left": percent - 1 + "%",
+                    "backgroundColor": color
+                }}
+            />
+
         </ProgressBarContainer>
     )
 }

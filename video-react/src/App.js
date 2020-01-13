@@ -3,9 +3,11 @@ import { Row, Col, Layout } from 'antd';
 import 'antd/dist/antd.css';
 import styled from 'styled-components';
 
-import videoSource1 from './video/테스트.mp4';
-// import videoSource1 from './video/유출금지.mov';
+// import videoSource1 from './video/테스트.mp4';
+import videoSource1 from './video/유출금지.mov';
+// import videoSource2 from './video/test.MOV';
 // import videoSource2 from './video/뉴스.mov';
+import videoSource2 from './video/남자축구.mp4';
 import imageSource from './image/bono.PNG';
 // import imageSource2 from './image/download.jpg';
 
@@ -50,7 +52,7 @@ const App = () => {
       <Footer>Footer</Footer> */}
       <Row className="border-black" type="flex" justify="center">
         <Col span={15} className="">
-          <MalgnPlayer src={videoSource1} skim={imageSource} />
+          <MalgnPlayer src={videoSource2} skim={imageSource} />
         </Col>
       </Row>
     </AppContainer>

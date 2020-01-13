@@ -13,10 +13,14 @@ import playButton from './image/play01.png';
 import playButton1 from './image/play-button-white-08.png';
 import pauseButton from './image/pause02.png';
 import pauseButton1 from './image/play-button-white-09.png';
+import volumeButton0 from './image/volume-button-white-0.png';
+import volumeButton1 from './image/volume-button-white-1.png';
+import volumeButton2 from './image/volume-button-white-2.png';
+import volumeButton3 from './image/volume-button-white-3.png';
 
 const MalgnPlayerContainer = styled.div`
     padding: 20px 20px 20px 20px;
-    border: 2px solid black;
+    border: 3px solid black;
     position: relative;
 
     -ms-user-select: none; 
@@ -38,9 +42,14 @@ const MalgnPlayerContainer = styled.div`
     }
     .video-container {
         position: relative;
+        /* width: auto; */
+        
+        /* border: 1px solid tomato; */
     }
     .timeline-container {
         position: relative;
+        height: 14vw;
+        /* border: 1px solid tomato; */
     }
 `;
 
@@ -81,6 +90,9 @@ const calculateWidthToPercent = (overallWidth, mouseX, barWidth, type) => {
 }
 
 const MalgnPlayer = ({ src, skim }) => {
+
+    const keyCodeRef = useRef(null);
+
     const [videoPlayMode, setVideoPlayMode] = useState("full");
     const [videoPlayer, setVideoPlayer] = useState(null);
     const [draggable, setDraggable] = useState(false);
@@ -91,6 +103,7 @@ const MalgnPlayer = ({ src, skim }) => {
     const [videoInTime, setVideoInTime] = useState(0.00);
     const [videoOutTime, setVideoOutTime] = useState(0.00);
     const [videoDuration, setVideoDuration] = useState(0.00);
+    const [videoVolume, setVideoVolume] = useState(0.00);
 
     const [moveTypeInBar, setMoveTypeInBar] = useState("center");
 
@@ -121,25 +134,30 @@ const MalgnPlayer = ({ src, skim }) => {
     // }, [videoDuration]);
 
     const onLoadedMetadata = useCallback((player) => {
-        const { duration, readyState } = player;
+        const { duration, readyState, volume } = player;
+        console.log("player : ", { player: player });
         setVideoPlayer(player);
         setVideoDuration(duration);
         setVideoOutTime(duration);
+        setVideoVolume(volume);
     }, []);
 
     /**
      * [1] 비디오 관련 Functions
      */
-    const onPlayFull = useCallback(() => {
+    const onPlayFull = useCallback((event) => {
         const { paused } = videoPlayer;
         paused ? videoPlayer.play() : videoPlayer.pause();
         setIsPlayed(!videoPlayer.paused);
         setVideoPlayMode("full");
+        if (event) {
+            console.log({ event: event });
+        }
     }, [videoPlayer]);
 
     const onPlaySection = useCallback(() => {
         const { paused } = videoPlayer;
-        if(paused) {
+        if (paused) {
             videoPlayer.currentTime = videoInTime;
             videoPlayer.play();
             setIsPlayed(true);
@@ -306,7 +324,70 @@ const MalgnPlayer = ({ src, skim }) => {
     }, []);
 
     const contextMenuInComponent = useCallback((event) => {
-        event.preventDefault();
+        // event.preventDefault();
+    }, []);
+
+    const mouseDownInVolume = useCallback((event) => {
+        console.log("mouseDownInVolume()");
+    });
+
+    const mouseMoveInVideo = useCallback((event) => {
+        console.log("mouseMoveInVideo()");
+    });
+    const changeVolume = useCallback((event, volume) => {
+        console.log("changeVolume()");
+        videoPlayer.volume = volume;
+        setVideoVolume(volume * 100.00);
+    }, [videoPlayer]);
+
+    const keyPress = useCallback((event) => {
+        console.log(event.keyCode);
+        let type = "current";
+        if(selectedBar) {
+            type = selectedBar.attributes.type.value;
+        }
+        const keyCode = keyCodeRef.current;
+        keyCode.value = "";
+        let code = event.keyCode;
+        switch (code) {
+            case 32: {
+                setIsPlayed(videoPlayer.paused);
+                if(videoPlayer.paused) {
+                    videoPlayer.play();
+                } else {
+                    videoPlayer.pause();
+                }      
+                break;
+            }
+            case 37: {
+                if(type === "current") {
+                    videoPlayer.currentTime = videoPlayer.currentTime - 10.00;
+                    setVideoCurrentTime(videoPlayer.currentTime - 10.00);
+                }
+                if(type === "in") {
+                    setVideoInTime(videoInTime - 10.00);
+                }
+                if(type === "out") {
+                    setVideoOutTime(videoInTime - 10.00);
+                }
+                
+                
+                break;
+            }
+            case 39: {
+                videoPlayer.currentTime =  videoPlayer.currentTime + 10.00;
+                setVideoCurrentTime( videoPlayer.currentTime + 10.00);
+                break;
+            }
+            default:
+                break;
+        }
+    }, [selectedBar, videoPlayer]);
+
+    const onFocus = useCallback(() => {
+        console.log("onFocus");
+        const keyCode = keyCodeRef.current;
+        keyCode.focus();
     }, []);
 
     return (
@@ -315,7 +396,14 @@ const MalgnPlayer = ({ src, skim }) => {
             onMouseUp={mouseUpInComponent}
             onMouseLeave={mouseLeaveComponent}
             onMouseEnter={mouseEnterComponent}
+            onClick={onFocus}
         >
+            <input
+                type="test"
+                style={{ "opacity": "1.0" }}
+                onKeyDown={keyPress}
+                ref={keyCodeRef}
+            />
             <ProgressPrint
                 currentTime={videoCurrentTime}
                 currentTimePercent={currentTimePercent}
@@ -334,19 +422,32 @@ const MalgnPlayer = ({ src, skim }) => {
                     className=""
                 />
                 <VideoCover
-                    className="radius"
-                    onClick={onPlayFull}
+                    className=""
+                    onPlayFull={onPlayFull}
+                    onMouseDownInVolume={mouseDownInVolume}
+                    onChangeVolume={changeVolume}
                     isPlayed={isPlayed}
-                    button={{ play: playButton1, pause: pauseButton1 }}
+                    button={{
+                        play: playButton1,
+                        pause: pauseButton1,
+                        volumes: [
+                            volumeButton0,
+                            volumeButton1,
+                            volumeButton2,
+                            volumeButton3,
+                        ]
+                    }}
                     percent={currentTimePercent}
                     currentTime={videoCurrentTime}
                     duration={videoDuration}
+                    volume={videoVolume}
                 />
 
             </div>
             <div className="timeline-container">
                 <VideoTimeline
                     skim={skim}
+                    isPlayed={isPlayed}
                     currentTimePercent={currentTimePercent}
                     inTimePercent={inTimePercent}
                     outTimePercent={outTimePercent}

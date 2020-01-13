@@ -20,11 +20,11 @@ const VideoTimelineBarContainer = styled.div`
         left: 0;
         right: 0;
         /* background-color: white; */
-        background-color: #FFC2C2;
+        background-color: rgb(255,255,255, 0.7);
         height: 90%;
         width: 0.5%;
         opacity: 1.0;
-        box-shadow: 0 10px 10px 0 black;
+        /* box-shadow: 0 10px 10px 0 black; */
         margin: 0;
     }
     .time-bar:hover, .time-bar:active {

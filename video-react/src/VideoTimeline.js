@@ -5,9 +5,10 @@ import VideoTimelineBar from './VideoTimelineBar';
 
 import imageSource from './image/ski.JPG';
 import thumbnail from './image/thumbnail.jpg';
+import thumbnail1 from './image/thumbnail_example.png';
 import videoPlayButton from './image/play-button.png';
-import timelinePlayButton from './image/play-button-basic.png';
-import timelinePauseButton from './image/pause-button-basic.png';
+import timelinePlayButton from './image/play-button-white-08.png';
+import timelinePauseButton from './image/play-button-white-09.png';
 import timelineRedoButton from './image/redo-button-basic.png';
 
 const VideoTimelineContainer = styled.div`
@@ -17,6 +18,7 @@ const VideoTimelineContainer = styled.div`
     width: 100%;
     /* border: 1px solid black; */
     /* padding: 10px 10px 10px 10px; */
+    /* box-shadow: 10px 10px 0 0 gray; */
 
     .time-img-container {
         position: relative;
@@ -29,6 +31,7 @@ const VideoTimelineContainer = styled.div`
         height: 100%;
         overflow: hidden;
         box-shadow: 0 10px 10px 0 gray;
+        border-radius: 0 0 10px 10px;
     }
     .time-img {
         position: relative;
@@ -48,44 +51,40 @@ const VideoTimelineContainer = styled.div`
         height: 100%;
         /* background-color: black; */
         opacity: 1.0;
-        padding: 10px 10px 10px 10px;
+        /* padding: 10px 10px 10px 10px; */
+        border-radius: 0 0 10px 10px;
     }
     .in-and-out-container {
         position: absolute;
         top: 0;
         bottom: 0;
-        /* left: 10%; */
-        /* right: 10%; */
         z-index: 2;
-        /* width: 80%; */
         height: 100%;
-        border: 5px solid #FFC2C2;
-        /* background-color: black; */
+        border: 4px solid rgb(255,255,255, 0.5);
+        /* border: 5px solid #FFC2C2; */
         opacity: 1.0;
-        padding: 10px 10px 10px 10px;
+        border-radius: 0 0 10px 10px;
     }
     .in-and-out-play-button-container {
         position: absolute;
         top: 5%;
-        right: 0;
         z-index: 4;
-        border: 1px solid tomato;
+        width: 2vw;
+        /* border: 1px solid tomato; */
         
     }
     .in-and-out-play-button {
         position: relative;
+        left: 50%;
         height: 2vw;
-        right: -90%;
-        /* top: 30%;
-        left: 20%;
-        z-index: 4;
-        height: 4vw; */
+        /* border: 1px solid tomato; */
     }
     
 `;
 
 const VideoTimeline = ({
     skim,
+    isPlayed,
     currentTimePercent,
     inTimePercent,
     outTimePercent,
@@ -122,15 +121,15 @@ const VideoTimeline = ({
         <VideoTimelineContainer
             onMouseDown={mouseDownInTimeline}
         >
-            <div className="time-img-container radius">
+            <div className="time-img-container">
                 <img
                     className="time-img"
-                    src={imageSource}
+                    src={thumbnail1}
                     alt=""
                 />
             </div>
             <div
-                className="in-and-out-container radius"
+                className="in-and-out-container"
                 style={{
                     "left": inTimePercent + "%",
                     "right": (100.00 - outTimePercent) + "%",
@@ -153,29 +152,28 @@ const VideoTimeline = ({
                 }}
                 onClick={onPlaySection}
             /> */}
-            {/* <div
+            <div
                 className="in-and-out-play-button-container"
                 style={{
                     "left": inTimePercent + "%",
                     "right": (100.00 - outTimePercent) + "%",
-                    "width": (100.00 - inTimePercent - (100.00 - outTimePercent)) + "%"
                 }}
             >
-                <img
-                    src={timelinePlayButton}
-                    className="in-and-out-play-button"
-                    type="play"
-                    alt=""
-                    onClick={onPlaySection}
-                />
-                <img
+                {isPlayed ? (<img
                     src={timelinePauseButton}
                     className="in-and-out-play-button"
                     type="play"
                     alt=""
                     onClick={onPlaySection}
-                />
-            </div> */}
+                />) : (<img
+                    src={timelinePlayButton}
+                    className="in-and-out-play-button"
+                    type="play"
+                    alt=""
+                    onClick={onPlaySection}
+                />)}
+                
+            </div>
             <VideoTimelineBar
                 currentTimePercent={currentTimePercent}
                 inTimePercent={inTimePercent}
