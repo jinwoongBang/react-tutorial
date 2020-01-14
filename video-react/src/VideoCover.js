@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import ProgressBar from './ProgressBar';
+import { calculateTime, calculateWidthToPercent} from './util/CommonUtils';
 
 import timelinePlayButton from './image/play-button-white-08.png';
 import timelinePauseButton from './image/play-button-white-09.png';
@@ -257,7 +258,7 @@ const VideoCover = ({
                     </div>
                     <div className="video-time-container">
                         <div className="video-time">
-                            {currentTime.toFixed(2)} / {duration.toFixed(2)}
+                            {calculateTime(currentTime)} / {calculateTime(duration)}
                         </div>
                     </div>
                 </div>

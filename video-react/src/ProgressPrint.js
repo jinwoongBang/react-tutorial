@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
+
+import { calculateTime } from './util/CommonUtils';
 
 const ProgressPrintContainer = styled.div`
     table {
@@ -27,8 +29,9 @@ const ProgressPrint = ({
     outTimePercent,
     outTime,
     timeControlVolume,
-    selectedBar
+    selectedBar,
 }) => {
+
 
     return (
         <ProgressPrintContainer>
@@ -46,14 +49,21 @@ const ProgressPrint = ({
                     </thead>
                     <tbody>
                         <tr>
+                            <td>{calculateTime(currentTime)}</td>
+                            <td>{calculateTime(inTime)}</td>
+                            <td>{calculateTime(outTime)}</td>
+                            <td rowSpan={3}>{timeControlVolume} s</td>
+                            <td
+                                rowSpan={3}
+                                style={{"color": "blue", "fontWeight": "bold"}}
+                            >
+                                {(selectedBar !== null) ? selectedBar.attributes.type.value : null}
+                            </td>
+                        </tr>
+                        <tr>
                             <td>{currentTime} s</td>
                             <td>{inTime} s</td>
                             <td>{outTime} s</td>
-                            <td rowSpan={2}>{timeControlVolume} s</td>
-                            <td
-                                rowSpan={2}
-                                style={{"color": "blue", "fontWeight": "bold"}}
-                            >{(selectedBar !== null) ? selectedBar.attributes.type.value : null}</td>
                         </tr>
                         <tr>
                             <td>{currentTimePercent} %</td>

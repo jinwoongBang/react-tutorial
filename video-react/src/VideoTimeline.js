@@ -112,7 +112,7 @@ const VideoTimeline = ({
             <div className="time-img-container">
                 <img
                     className="time-img"
-                    src={thumbnail1}
+                    src={skim}
                     alt=""
                 />
             </div>
