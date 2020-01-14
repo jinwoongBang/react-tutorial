@@ -59,52 +59,6 @@ const MalgnPlayerContainer = styled.div`
     }
 `;
 
-// const calculateWidthToPercent = (overallWidth, mouseX, barWidth, type) => {
-//     let percent = 0.00;
-//     switch (type) {
-//         case "left":
-//             percent = (mouseX + barWidth * 0.6) / (overallWidth);
-//             break;
-//         case "right":
-//             percent = (mouseX - barWidth) / (overallWidth);
-//             break;
-//         case "center":
-//             percent = (mouseX - barWidth) / (overallWidth);
-//             break;
-//         default:
-//             break;
-//     }
-
-//     if (percent < 0.00) {
-//         percent = 0.00;
-//     } else if (percent > 1.00) {
-//         percent = 1.00;
-//     }
-
-//     return percent;
-// }
-
-// const calculateTime = (seconds, format) => {
-//     let minutes = seconds / 60.00;
-//     let hours = minutes / 60.00;
-//     if (minutes < 1.00) {
-//         return seconds;
-//     } else {
-//         if (hours < 1.00) {
-//             return minutes;
-//         } else {
-//             return hours;
-//         }
-//     }
-// }
-// const calculateTime = (seconds) => {
-//     var date = new Date(seconds * 1000);
-//     var hh = date.getUTCHours();
-//     var mm = date.getUTCMinutes();
-//     var ss = date.getSeconds();
-//     return hh + ":" + mm + ":" + ss;
-// }
-
 /**
  * 
  * @param {*} param0 
@@ -116,31 +70,39 @@ const MalgnPlayer = ({ src, skim }) => {
      */
     const [videoPlayer, setVideoPlayer] = useState(null);
     const [videoReadyState, setVideoReadyState] = useState(false);
+    const [isPlayed, setIsPlayed] = useState(false);
     // "full" : 전체 재생, "section" : 구간 재생
     const [videoPlayMode, setVideoPlayMode] = useState("full");
     const [draggable, setDraggable] = useState(false);
-    const [selectedBar, setSelectedBar] = useState(null);
-    const [isPlayed, setIsPlayed] = useState(false);
 
+    const [selectedBar, setSelectedBar] = useState(null);
+    const [currentTimeBar, setCurrentTimeBar] = useState(null);
+    const [inTimeBar, setInTimeBar] = useState(null);
+    const [outTimeBar, setOutTimeBar] = useState(null);
+
+    // "center" : 타임라인을 클릭하여 현재 시간을 변경 할 경우
+    // "left"   : 시간 표시 막대를 왼쪽으로 움직이는 중
+    // "right"   : 시간 표시 막대의 오른쪽으로 움직이는 중
+    const [moveTypeInBar, setMoveTypeInBar] = useState("center");
+    
     const [videoCurrentTime, setVideoCurrentTime] = useState(0.00);
     const [videoInTime, setVideoInTime] = useState(0.00);
     const [videoOutTime, setVideoOutTime] = useState(0.00);
     const [videoDuration, setVideoDuration] = useState(0.00);
     const [videoVolume, setVideoVolume] = useState(0.00);
     const [timeControlVolume, setTimeControlVolume] = useState(1);
-    // "center" : 타임라인을 클릭하여 현재 시간을 변경 할 경우
-    // "left"   : 시간 표시 막대를 왼쪽으로 움직이는 중
-    // "right"   : 시간 표시 막대의 오른쪽으로 움직이는 중
-    const [moveTypeInBar, setMoveTypeInBar] = useState("center");
-    const [currentTimeBar, setCurrentTimeBar] = useState(null);
-    const [inTimeBar, setInTimeBar] = useState(null);
-    const [outTimeBar, setOutTimeBar] = useState(null);
-
+    
     /*
      * [2] Mobile 상태
      */
     const [touchStartX, setTouchStartX] = useState(0);
     const [touchStartPercent, setTouchStartPercnet] = useState(0);
+
+    /*
+     * [3] animation 상태
+     */
+    const [bottomCoverView, setBottomCoverView] = useState(false);
+    const [holdBottomCoverView, setHoldBottomCoverView] = useState(false);
 
     useEffect(() => {
         console.log('videoPlayMode : ', videoPlayMode);
@@ -543,6 +505,12 @@ const MalgnPlayer = ({ src, skim }) => {
                     onMouseDownInTimeline={mouseDownInTopTimeline}
                     onChangeVolume={changeVolume}
                     onPlaySection={onPlaySection}
+                    
+                    setBottomCoverView={setBottomCoverView}
+                    setHoldBottomCoverView={setHoldBottomCoverView}
+
+                    bottomCoverView={bottomCoverView}
+                    holdBottomCoverView={holdBottomCoverView}
 
                     isPlayed={isPlayed}
                     button={{
