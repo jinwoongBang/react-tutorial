@@ -16,9 +16,6 @@ const VideoTimelineContainer = styled.div`
     z-index: 0;
     height: 14.00vw;
     width: 100%;
-    /* border: 1px solid black; */
-    /* padding: 10px 10px 10px 10px; */
-    /* box-shadow: 10px 10px 0 0 gray; */
 
     .time-img-container {
         position: relative;
@@ -49,9 +46,7 @@ const VideoTimelineContainer = styled.div`
         z-index: 3;
         width: 100%;
         height: 100%;
-        /* background-color: black; */
         opacity: 1.0;
-        /* padding: 10px 10px 10px 10px; */
         border-radius: 0 0 10px 10px;
     }
     .in-and-out-container {
@@ -66,26 +61,11 @@ const VideoTimelineContainer = styled.div`
         opacity: 1.0;
         border-radius: 0 0 10px 10px;
     }
-    .in-and-out-play-button-container {
-        position: absolute;
-        top: 5%;
-        z-index: 4;
-        width: 2vw;
-        /* border: 1px solid tomato; */
-        
-    }
-    .in-and-out-play-button {
-        position: relative;
-        left: 50%;
-        height: 2vw;
-        /* border: 1px solid tomato; */
-    }
     
 `;
 
 const VideoTimeline = ({
     skim,
-    isPlayed,
     currentTimePercent,
     inTimePercent,
     outTimePercent,
@@ -95,7 +75,6 @@ const VideoTimeline = ({
     onMouseDownOutBar,
     onMouseMoveInComponent,
     onMouseMoveInBar,
-    onPlaySection,
 
     onTouchStart,
     onTouchMove,
@@ -144,36 +123,14 @@ const VideoTimeline = ({
                     "right": (100.00 - outTimePercent) + "%",
                     "width": (outTimePercent - inTimePercent) + "%"
                 }}
-            />
-            <div
-                className="time-img-cover"
-                onMouseMove={mouseMoveInComponent}
-                
-                onTouchEnd={onTouchEnd}
-                type="timeline"
             >
             </div>
             <div
-                className="in-and-out-play-button-container"
-                style={{
-                    "left": inTimePercent + "%",
-                    "right": (100.00 - outTimePercent) + "%",
-                }}
+                className="time-img-cover"
+                onMouseMove={mouseMoveInComponent}
+                onTouchEnd={onTouchEnd}
+                type="timeline"
             >
-                {isPlayed ? (<img
-                    src={timelinePauseButton}
-                    className="in-and-out-play-button"
-                    type="play"
-                    alt=""
-                    onClick={onPlaySection}
-                />) : (<img
-                    src={timelinePlayButton}
-                    className="in-and-out-play-button"
-                    type="play"
-                    alt=""
-                    onClick={onPlaySection}
-                />)}
-
             </div>
             <VideoTimelineBar
                 currentTimePercent={currentTimePercent}

@@ -1,4 +1,23 @@
 import React from 'react';
+import styled from 'styled-components';
+
+const ProgressPrintContainer = styled.div`
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        text-align: center;
+        padding: 8px;
+    }
+    th {
+        background-color: white;
+        /* border-bottom: 1px solid gray; */
+    }
+`;
 
 const ProgressPrint = ({
     currentTime,
@@ -12,17 +31,39 @@ const ProgressPrint = ({
 }) => {
 
     return (
-        <div>
-            <div>
-                <p style={{ "color": "black" }}>진행 시간 : {currentTime} 초</p>
-                <p style={{ "color": "black" }}>진행 률 : {currentTimePercent} %</p>
-                <p style={{ "color": "black" }}>In Time : {inTime} 초 / {inTimePercent} %</p>
-                <p style={{ "color": "black" }}>Out Time : {outTime} 초 / {outTimePercent} %</p>
-                <p style={{ "color": "black" }}>미세 조정 : {timeControlVolume} 초</p>
-                <p style={{ "color": "black" }}>선택된 막대 : {(selectedBar !== null) ? selectedBar.attributes.type.value : null}</p>
-            </div>
+        <ProgressPrintContainer>
             <hr></hr>
-        </div>
+            <div style={{ "overflowX": "auto" }}>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Current Time</th>
+                            <th>In Time</th>
+                            <th>Out Time</th>
+                            <th>미세 조정</th>
+                            <th>Selected Bar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{currentTime} s</td>
+                            <td>{inTime} s</td>
+                            <td>{outTime} s</td>
+                            <td rowSpan={2}>{timeControlVolume} s</td>
+                            <td
+                                rowSpan={2}
+                                style={{"color": "blue", "fontWeight": "bold"}}
+                            >{(selectedBar !== null) ? selectedBar.attributes.type.value : null}</td>
+                        </tr>
+                        <tr>
+                            <td>{currentTimePercent} %</td>
+                            <td>{inTimePercent} %</td>
+                            <td>{outTimePercent} %</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </ProgressPrintContainer>
     );
 }
 

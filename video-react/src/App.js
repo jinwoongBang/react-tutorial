@@ -26,6 +26,67 @@ const AppContainer = styled(Layout)`
   .border-gray {
     border: 1px solid gray;
   }
+
+  /* The side navigation menu */
+  .sidebar {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+  }
+
+  /* Sidebar links */
+  .sidebar a {
+    display: block;
+    color: black;
+    padding: 16px;
+    text-decoration: none;
+  }
+
+  /* Active/current link */
+  .sidebar a.active {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  /* Links on mouse-over */
+  .sidebar a:hover:not(.active) {
+    background-color: #555;
+    color: white;
+  }
+
+  /* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+  div.content {
+    margin-left: 200px;
+    padding: 1px 16px;;
+  }
+
+  /* On screens that are less than 700px wide, make the sidebar into a topbar */
+  @media screen and (max-width: 700px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .sidebar a {
+      float: left;
+    }
+    div.content {
+      margin-left: 0;
+      }
+  }
+
+  /* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+  @media screen and (max-width: 400px) {
+    .sidebar a {
+      text-align: center;
+      float: none;
+    }
+  }
+
 `;
 
 const App = () => {
@@ -50,11 +111,28 @@ const App = () => {
         </Content>
       </Layout>
       <Footer>Footer</Footer> */}
-      <Row className="border-black" type="flex" justify="center">
+      {/* <Row className="border-black" type="flex" justify="center">
+        <Col span={9} className="">
+          
+          </Col>
         <Col span={15} className="">
           <MalgnPlayer src={videoSource1} skim={imageSource} />
         </Col>
-      </Row>
+      </Row> */}
+      <div className="sidebar">
+        <a className="active" href="#home">Home</a>
+        <a href="#news">News</a>
+        <a href="#contact">Contact</a>
+        <a href="#about">About</a>
+      </div>
+
+      <div className="content">
+        <Row type="flex" justify="center">
+          <Col span={18}>
+            <MalgnPlayer src={videoSource1} skim={imageSource} />
+          </Col>
+        </Row>
+      </div>
     </AppContainer>
   )
 }

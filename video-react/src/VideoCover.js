@@ -3,6 +3,10 @@ import styled from 'styled-components';
 
 import ProgressBar from './ProgressBar';
 
+import timelinePlayButton from './image/play-button-white-08.png';
+import timelinePauseButton from './image/play-button-white-09.png';
+import playSectionButton from './image/rotate.png';
+
 const VideoCoverContainer = styled.div`
     position: absolute;
     top: 0;
@@ -46,12 +50,12 @@ const VideoCoverContainer = styled.div`
         width: 100%;
         height: 80%;
         overflow: hidden;
-        border: 1px solid tomato;
+        /* border: 1px solid tomato; */
     }
     .video-top-button-container {
         position: relative;
         transition: opacity .5s linear;
-        border: 1px solid tomato;
+        /* border: 1px solid tomato; */
         top: 50%;
         width: 100%;
         left: 0%;
@@ -85,17 +89,18 @@ const VideoCoverContainer = styled.div`
         left: 0%;
         /* background-color: rgb(0, 0, 0, 0.8); */
         color: white;
-        text-align: center;
     }
     .video-top-notification {
         position: relative;
         transition: opacity .5s linear;
         left: 43%;
-        /* background-color: red; */
+        background-color: red;
         background-color: rgb(0, 0, 0, 0.8);
         width: 10vw;
         height: 100%;
         border: 1px solid tomato;
+        text-align: center;
+        vertical-align: middle;
     }
     
     .video-bottom-cover {
@@ -109,6 +114,7 @@ const VideoCoverContainer = styled.div`
         height: 20%;
         background: linear-gradient(360deg, rgba(0,0,0, 1.0), rgba(255,255,255, 0.0));
         opacity: 0.0;
+        transition: opacity .3s linear;
     }
     .video-bottom-cover:hover {
         opacity: 1.0;
@@ -119,12 +125,12 @@ const VideoCoverContainer = styled.div`
         width: 95%;
         top: 53%;
         left: 2.5%;
-        border: 1px solid tomato;
+        /* border: 1px solid tomato; */
     }
     .video-bottom-button-container {
         position: relative;
         /* left: 10%; */
-        border: 1px solid tomato;
+        /* border: 1px solid tomato; */
     }
     .video-bottom-button-container > img {
         width: 2vw;
@@ -138,7 +144,7 @@ const VideoCoverContainer = styled.div`
         width: 50%;
         top: 40%;
         left: 2.5%;
-        border: 1px solid tomato;
+        /* border: 1px solid tomato; */
         color: white;
     }
     .video-time {
@@ -166,7 +172,9 @@ const calculateSecondToHour = (time) => {
 const VideoCover = ({
     onPlayFull,
     onMouseDownInVolume,
+    onMouseDownInTimeline,
     onChangeVolume,
+    onPlaySection,
     isPlayed,
     button,
     percent,
@@ -206,22 +214,15 @@ const VideoCover = ({
                         : <img src={button.play} alt="" />
                     }
                 </div>
-                <div
-                    className={[
-                        'video-top-notification-container',
-                        isPlayed && 'click'
-                    ].join(' ')}
-                >
-                    <div className="video-top-notification">
-                        In Time Bar
-                    </div>
-                </div>
             </div>
 
-            <div className="video-bottom-cover" onMouseLeave={() => {
-                console.log('mouseleave');
-            }}>
-                <ProgressBar className="radius" percent={percent} color="red" />
+            <div className="video-bottom-cover">
+                <ProgressBar
+                    className="radius"
+                    percent={percent}
+                    onMouseDown={onMouseDownInTimeline}
+                    color="red"
+                />
                 <div className="video-bottom-container">
                     <div className="video-bottom-button-container">
                         {isPlayed
@@ -230,11 +231,21 @@ const VideoCover = ({
                         }
                     </div>
                     <div className="video-bottom-button-container">
-                        {volume === 0
-                            ? <img src={button.volumes[0]} alt="" onClick={onChangeVideoVolume} />
-                            : <img src={button.volumes[1]} alt="" onClick={onMuteVideoVolume} />
-                        }
-
+                        <img
+                            src={playSectionButton}
+                            type="play"
+                            alt=""
+                            onClick={onPlaySection}
+                        />
+                    </div>
+                    <div className="video-bottom-button-container">
+                        {(volume > 70)
+                                ? <img src={button.volumes[3]} onClick={onMuteVideoVolume} alt="" />
+                                : (volume > 30)
+                                    ? <img src={button.volumes[2]} onClick={onMuteVideoVolume} alt="" />
+                                    : (volume > 0)
+                                        ? <img src={button.volumes[1]} onClick={onMuteVideoVolume} alt="" />
+                                        : <img src={button.volumes[0]} onClick={onChangeVideoVolume} alt="" />}
                     </div>
                     <div className="video-bottom-volume-container">
                         <ProgressBar

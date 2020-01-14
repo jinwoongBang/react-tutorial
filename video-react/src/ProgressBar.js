@@ -3,16 +3,17 @@ import styled from 'styled-components';
 
 const ProgressBarContainer = styled.div`
     position: relative;
+    box-sizing: border-box;
     top: 40%;
     left: 2.5%;
     width: 95%;
-    height: 0.2vw;
+    height: 0.5vw;
     z-index: 4;
-    /* border: 1px solid black; */
+    /* border: 1px solid tomato; */
     /* border-radius: 10px 10px 10px 10px; */
     background-color: rgb(255,255,255, 0.3);
     /* box-shadow: 0 2px 2px 0 gray; */
-    padding: 0;
+    /* padding: 2%; */
     
 
     .video-progress-bar {
@@ -44,11 +45,7 @@ const ProgressBar = ({
 }) => {
     return (
         <ProgressBarContainer
-            onMouseDown={(event) => {
-                const { target, currentTarget } = event;
-                console.log({target: target});
-                console.log({currentTarget: currentTarget});
-            }}
+            onMouseDown={onMouseDown}
         >
             <div
                 className="video-progress-bar"
@@ -57,13 +54,13 @@ const ProgressBar = ({
                     "backgroundColor": color
                 }}
             />
-            <div
+            {/* <div
                 className="video-current-point"
                 style={{
                     "left": percent - 1 + "%",
                     "backgroundColor": color
                 }}
-            />
+            /> */}
 
         </ProgressBarContainer>
     )

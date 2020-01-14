@@ -20,7 +20,6 @@ import volumeButton3 from './image/volume-button-white-3.png';
 
 const MalgnPlayerContainer = styled.div`
     padding: 20px 20px 20px 20px;
-    border: 3px solid black;
     position: relative;
 
     -ms-user-select: none; 
@@ -114,12 +113,19 @@ const MalgnPlayer = ({ src, skim }) => {
     const [inTimeBar, setInTimeBar] = useState(null);
     const [outTimeBar, setOutTimeBar] = useState(null);
 
+    
+
     /*
      * [2] Mobile 상태
      */
     const [touchStartX, setTouchStartX] = useState(0);
     const [touchStartPercent, setTouchStartPercnet] = useState(0);
 
+    useEffect(() => {
+        console.log('videoPlayMode : ', videoPlayMode);
+        return () => {
+        }
+    }, [videoPlayMode]);
     // useEffect(() => {
     //     console.log('in : ', videoInTime);
     //     return () => {
@@ -234,12 +240,13 @@ const MalgnPlayer = ({ src, skim }) => {
     /*
      * [2-1] 타임라인에서 클릭 이벤트 발생
      */
-    const mouseDownInTimeline = useCallback(({ nativeEvent, target, currentTarget }) => {
+    const mouseDownInBottomTimeline = useCallback(({ nativeEvent, target, currentTarget }) => {
         const type = target.attributes.type.value;
+        const { offsetX } = nativeEvent;
+        // console.log("test : ", offsetX);
         if (type === "timeline") {
             // const currentTimeBar = currentTarget.lastElementChild.firstElementChild;
             const timelineWidth = currentTarget.offsetWidth;
-            const { offsetX } = nativeEvent;
             const percent = calculateWidthToPercent(
                 timelineWidth, offsetX, currentTimeBar.offsetWidth, moveTypeInBar
             );
@@ -250,6 +257,29 @@ const MalgnPlayer = ({ src, skim }) => {
         }
 
     }, [currentTimeBar, moveTypeInBar, videoDuration, videoPlayer]);
+
+    const mouseDownInTopTimeline = useCallback((event) => {
+        const { nativeEvent, target, currentTarget } = event;
+        const { offsetX } = nativeEvent;
+        const timelineWidth = currentTarget.offsetWidth;
+        const percent = calculateWidthToPercent(
+            timelineWidth, offsetX, 1, "center"
+        );
+        setVideoCurrentTime(percent * videoDuration);
+        videoPlayer.currentTime = percent * videoDuration;
+    });
+
+    const mouseDownInVolume = useCallback((event) => {
+        console.log("mouseDownInVolume()");
+        const { nativeEvent, target, currentTarget } = event;
+        const { offsetX } = nativeEvent;
+        const timelineWidth = currentTarget.offsetWidth;
+        const percent = calculateWidthToPercent(timelineWidth, offsetX, 1, "center");
+        console.log("percent : ", percent * 100);
+        // console.log({videoPlayer: videoPlayer});
+        setVideoVolume(percent * 100);
+        videoPlayer.volume = percent;
+    });
 
     /*
      * [2-2] 현재 시간 막대를 클릭
@@ -337,6 +367,12 @@ const MalgnPlayer = ({ src, skim }) => {
     /*
      * [2-8] 타임라인 '밖' 에서 Mouse Up
      */
+    const mouseEnterComponent = useCallback((event) => {
+        event.currentTarget.addEventListener("wheel", (event) => {
+            event.preventDefault();
+        }, { passive: false, once: false })
+    }, []);
+
     const mouseLeaveComponent = useCallback(() => {
         if (draggable) {
             window.addEventListener("mouseup", (event) => {
@@ -353,15 +389,13 @@ const MalgnPlayer = ({ src, skim }) => {
         event.preventDefault();
     }, []);
 
-    const mouseDownInVolume = useCallback(() => {
-        console.log("mouseDownInVolume()");
-    });
+    
 
     const mouseMoveInVideo = useCallback(() => {
         console.log("mouseMoveInVideo()");
     });
+
     const changeVolume = useCallback((event, volume) => {
-        console.log("changeVolume()");
         videoPlayer.volume = volume;
         setVideoVolume(volume * 100.00);
     }, [videoPlayer]);
@@ -409,6 +443,7 @@ const MalgnPlayer = ({ src, skim }) => {
             // [스페이스 바]
             case 32: {
                 const { paused } = videoPlayer;
+                setVideoPlayMode("full");
                 if (paused) {
                     setIsPlayed(paused);
                     videoPlayer.play();
@@ -501,30 +536,11 @@ const MalgnPlayer = ({ src, skim }) => {
             onContextMenu={contextMenuInComponent}
             onMouseUp={mouseUpInComponent}
             onMouseLeave={mouseLeaveComponent}
+            onMouseEnter={mouseEnterComponent}
             onWheel={onWheel}
             onKeyDown={keyDown}
-            onScroll={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-            }}
             tabIndex="0"
         >
-            {/* <input
-                type="text"
-                style={{ "opacity": "1.0" }}
-                onKeyDown={keyPress}
-                ref={keyCodeRef}
-            /> */}
-            <ProgressPrint
-                currentTime={videoCurrentTime}
-                currentTimePercent={currentTimePercent}
-                inTime={videoInTime}
-                inTimePercent={inTimePercent}
-                outTime={videoOutTime}
-                outTimePercent={outTimePercent}
-                timeControlVolume={timeControlVolume}
-                selectedBar={selectedBar}
-            />
             <div className="video-container">
                 <VideoContent
                     src={src}
@@ -537,7 +553,10 @@ const MalgnPlayer = ({ src, skim }) => {
                     className=""
                     onPlayFull={onPlayFull}
                     onMouseDownInVolume={mouseDownInVolume}
+                    onMouseDownInTimeline={mouseDownInTopTimeline}
                     onChangeVolume={changeVolume}
+                    onPlaySection={onPlaySection}
+
                     isPlayed={isPlayed}
                     button={{
                         play: playButton1,
@@ -564,13 +583,12 @@ const MalgnPlayer = ({ src, skim }) => {
                     currentTimePercent={currentTimePercent}
                     inTimePercent={inTimePercent}
                     outTimePercent={outTimePercent}
-                    onMouseDownInTimeline={mouseDownInTimeline}
+                    onMouseDownInTimeline={mouseDownInBottomTimeline}
                     onMouseDownCurrentBar={mouseDownCurrentBar}
                     onMouseDownInBar={mouseDownInBar}
                     onMouseDownOutBar={mouseDownOutBar}
                     onMouseMoveInComponent={mouseMoveInComponent}
                     onMouseMoveInBar={mouseMoveInBar}
-                    onPlaySection={onPlaySection}
 
                     onTouchStart={onTouchStart}
                     onTouchMove={onTouchMove}
@@ -581,6 +599,19 @@ const MalgnPlayer = ({ src, skim }) => {
                     setOutTimeBar={setOutTimeBar}
                 />
             </div>
+            <div style={{ "height": "2vw" }}>
+
+            </div>
+            <ProgressPrint
+                currentTime={videoCurrentTime}
+                currentTimePercent={currentTimePercent}
+                inTime={videoInTime}
+                inTimePercent={inTimePercent}
+                outTime={videoOutTime}
+                outTimePercent={outTimePercent}
+                timeControlVolume={timeControlVolume}
+                selectedBar={selectedBar}
+            />
         </ MalgnPlayerContainer>
     )
 }
