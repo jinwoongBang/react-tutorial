@@ -19,16 +19,17 @@ const VideoTimelineContainer = styled.div`
 
     .time-img-container {
         position: relative;
+        z-index: 1;
         top: 0%;
         bottom: 0;
         left: 0;
         right: 0;
-        z-index: 1;
         width: 100%;
         height: 100%;
         overflow: hidden;
         box-shadow: 0 10px 10px 0 gray;
         border-radius: 0 0 10px 10px;
+        background-color: rgb(0, 0, 0, 1.0);
     }
     .time-img {
         position: relative;
@@ -39,14 +40,13 @@ const VideoTimelineContainer = styled.div`
 
     .time-img-cover {
         position: absolute;
+        z-index: 3;
         top: 0%;
         bottom: 0;
         left: 0;
         right: 0;
-        z-index: 3;
         width: 100%;
         height: 100%;
-        opacity: 1.0;
         border-radius: 0 0 10px 10px;
     }
     .in-and-out-container {
@@ -66,6 +66,9 @@ const VideoTimelineContainer = styled.div`
 
 const VideoTimeline = ({
     skim,
+    currentTime,
+    inTime,
+    outTime,
     currentTimePercent,
     inTimePercent,
     outTimePercent,
@@ -110,11 +113,12 @@ const VideoTimeline = ({
             onTouchMove={onTouchMove}
         >
             <div className="time-img-container">
-                <img
+                {/* <img
                     className="time-img"
                     src={skim}
                     alt=""
-                />
+                /> */}
+                <canvas className="time-img"></canvas>
             </div>
             <div
                 className="in-and-out-container"
@@ -128,18 +132,23 @@ const VideoTimeline = ({
             <div
                 className="time-img-cover"
                 onMouseMove={mouseMoveInComponent}
-                onTouchEnd={onTouchEnd}
                 type="timeline"
             >
             </div>
             <VideoTimelineBar
+                currentTime={currentTime}
+                inTime={inTime}
+                outTime={outTime}
+
                 currentTimePercent={currentTimePercent}
                 inTimePercent={inTimePercent}
                 outTimePercent={outTimePercent}
+
                 onMouseDownCurrentBar={mouseDownCurrentBar}
                 onMouseDownInBar={mouseDownInBar}
                 onMouseDownOutBar={mouseDownOutBar}
                 onMouseMoveInBar={onMouseMoveInBar}
+
                 setCurrentTimeBar={setCurrentTimeBar}
                 setInTimeBar={setInTimeBar}
                 setOutTimeBar={setOutTimeBar}

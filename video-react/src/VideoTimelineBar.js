@@ -19,27 +19,51 @@ const VideoTimelineBarContainer = styled.div`
         bottom: 0;
         left: 0;
         right: 0;
-        /* background-color: white; */
-        background-color: rgb(255,255,255, 0.7);
         height: 90%;
         width: 0.5%;
-        opacity: 1.0;
-        /* box-shadow: 0 10px 10px 0 black; */
         margin: 0;
+        /* transition: left 0.04s linear; */
+    }
+    .current {
+        background-color: rgb(255, 255, 255, 0.6);
+    }
+    .current > .time {
+        top: 40%;
+        left: -40px;
+    }
+    .in {
+        background-color: rgb(255, 255, 255, 0.0);
+    }
+    .in > .time {
+        left: 15px;
+    }
+    .out {
+        background-color: rgb(255, 255, 255, 0.0);
+    }
+    .out > .time{
+        top: 85%;
+        left: -100px;
     }
     .time-bar:hover, .time-bar:active {
         cursor: col-resize;
     }
-
-    .in-bar, .out-bar {
-        opacity: 0.0;
+    .time {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        color: white;
+        opacity: 0.7;
+        cursor: pointer;
     }
-    /* .in-bar:hover, .out-bar:hover {
+    .time:hover {
         opacity: 1.0;
-    } */
+    }
 `;
 
 const VideoTimelineBar = ({
+    currentTime,
+    inTime,
+    outTime,
     currentTimePercent,
     inTimePercent,
     outTimePercent,
@@ -73,34 +97,48 @@ const VideoTimelineBar = ({
             onMouseMoveInBar("left");
         }
     }, [onMouseMoveInBar]);
+
     return (
         <VideoTimelineBarContainer
             onMouseMove={mouseMoveInBar}
         >
             <div
-                className="time-bar radius"
+                className="time-bar current radius"
                 style={{ "left": currentTimePercent + "%" }}
                 onMouseDown={onMouseDownCurrentBar}
                 draggable={false}
                 type="current"
                 ref={currentRef}
-            />
+            >
+                <div className="time" type="time">
+                    {currentTime}
+                </div>
+            </div>
+
             <div
-                className="time-bar in-bar radius"
+                className="time-bar in radius"
                 style={{ "left": inTimePercent + "%" }}
                 onMouseDown={onMouseDownInBar}
                 draggable={false}
                 type="in"
                 ref={inRef}
-            />
+            >
+                <div className="time" type="time">
+                    {inTime}
+                </div>
+            </div>
             <div
-                className="time-bar out-bar radius"
+                className="time-bar out radius"
                 style={{ "left": outTimePercent + "%" }}
                 onMouseDown={onMouseDownOutBar}
                 draggable={false}
                 type="out"
                 ref={outRef}
-            />
+            >
+                <div className="time" type="time">
+                    {outTime}
+                </div>
+            </div>
         </VideoTimelineBarContainer>
     );
 }

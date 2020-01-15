@@ -32,16 +32,16 @@ const MalgnPlayerContainer = styled.div`
     font-size: 1em;
 
     @media (min-width: 768px) and (max-width: 991px) {
-        font-size: 0.8em;
+        font-size: 0.2em;
     }
     @media (min-width: 576px) and (max-width: 767px) {
-        font-size: 0.7em;
+        font-size: 0.2em;
     }
     @media (min-width: 375px) and (max-width: 575px) {
-        font-size: 0.6em;
+        font-size: 0.1em;
     }
     @media (max-width: 374px) {
-        font-size: 0.5em;
+        font-size: 0.1em;
     }
 
     .border {
@@ -61,11 +61,12 @@ const MalgnPlayerContainer = styled.div`
 
 /**
  * 
- * @param {*} param0 
+ * @param { src }   영상 소스
+ * @param { skim }  스킴 이미지
  */
 const MalgnPlayer = ({ src, skim }) => {
 
-    /*
+    /**
      * [1] Web 상태
      */
     const [videoPlayer, setVideoPlayer] = useState(null);
@@ -90,19 +91,19 @@ const MalgnPlayer = ({ src, skim }) => {
     const [videoOutTime, setVideoOutTime] = useState(0.00);
     const [videoDuration, setVideoDuration] = useState(0.00);
     const [videoVolume, setVideoVolume] = useState(0.00);
-    const [timeControlVolume, setTimeControlVolume] = useState(1);
+    const [detailedTime, setDetailedTime] = useState(1);
     
-    /*
+    /**
      * [2] Mobile 상태
      */
     const [touchStartX, setTouchStartX] = useState(0);
     const [touchStartPercent, setTouchStartPercnet] = useState(0);
 
-    /*
+    /**
      * [3] animation 상태
      */
-    const [bottomCoverView, setBottomCoverView] = useState(false);
-    const [holdBottomCoverView, setHoldBottomCoverView] = useState(false);
+    const [isBottomCover, setIsBottomCover] = useState(false);
+    const [isHoldBottomCover, setIsHoldBottomCover] = useState(false);
 
     useEffect(() => {
         console.log('videoPlayMode : ', videoPlayMode);
@@ -126,7 +127,7 @@ const MalgnPlayer = ({ src, skim }) => {
      * [1] 비디오 재생 관련 Functions
      */
 
-    /*
+    /**
      * [1-1] 전체 재생 (full play)
      */
     const onPlayFull = useCallback((event) => {
@@ -136,7 +137,7 @@ const MalgnPlayer = ({ src, skim }) => {
         setVideoPlayMode("full");
     }, [videoPlayer]);
 
-    /*
+    /**
      * [1-2] 구간 재생 (section play)
      */
     const onPlaySection = useCallback(() => {
@@ -152,8 +153,8 @@ const MalgnPlayer = ({ src, skim }) => {
         setVideoPlayMode("section");
     }, [videoInTime, videoPlayer]);
 
-    /*
-     * [1-3] 현재 재생 중인 시간 상태 업데이트
+    /**
+     * [1-3] 현재 재생 중인 시간 업데이트
      */
     const onTimeUpdate = useCallback((player) => {
         setVideoCurrentTime(player.currentTime);
@@ -167,7 +168,7 @@ const MalgnPlayer = ({ src, skim }) => {
 
     }, [videoOutTime, videoPlayMode]);
 
-    /*
+    /**
      * [1-4] 비디오 진행률 계산
      */
     const currentTimePercent = useMemo(() => {
@@ -186,13 +187,12 @@ const MalgnPlayer = ({ src, skim }) => {
      * [2] Client Event 관련 Functions
      */
 
-    /*
+    /**
      * [2-1] 타임라인에서 클릭 이벤트 발생
      */
     const mouseDownInBottomTimeline = useCallback(({ nativeEvent, target, currentTarget }) => {
         const type = target.attributes.type.value;
         const { offsetX } = nativeEvent;
-        // console.log("test : ", offsetX);
         if (type === "timeline") {
             // const currentTimeBar = currentTarget.lastElementChild.firstElementChild;
             const timelineWidth = currentTarget.offsetWidth;
@@ -208,28 +208,28 @@ const MalgnPlayer = ({ src, skim }) => {
         
     }, [currentTimeBar, moveTypeInBar, videoDuration, videoPlayer]);
 
-    /*
+    /**
      * [2-2] 현재 시간 막대를 클릭
      */
     const mouseDownCurrentBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
         setDraggable(true);
         setSelectedBar(currentTarget);
     }, []);
-    /*
+    /**
      * [2-3] In Time 막대를 클릭
      */
     const mouseDownInBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
         setDraggable(true);
         setSelectedBar(currentTarget);
     }, []);
-    /*
+    /**
      * [2-4] Out Time 막대를 클릭
      */
     const mouseDownOutBar = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
         setDraggable(true);
         setSelectedBar(currentTarget);
     }, []);
-    /*
+    /**
      * [2-5] 막대 기준 오른쪽으로 움직이는지 왼쪽으로 움직이는지
      */
     const mouseMoveInBar = useCallback((type) => {
@@ -238,8 +238,11 @@ const MalgnPlayer = ({ src, skim }) => {
         }
     }, [draggable]);
 
-    /*
+    /**
      * [2-6] 선택된 막대의 위치를 변경 (막대 드래그) 
+     *  "current": 현재 시간 막대
+     *  "in": In 포인트 막대
+     *  "out": Out 포인트 막대
      */
     const mouseMoveInComponent = useCallback((event) => {
         const { nativeEvent, target, currentTarget } = event;
@@ -249,22 +252,20 @@ const MalgnPlayer = ({ src, skim }) => {
             const barWidth = selectedBar.offsetWidth;
             const x = nativeEvent.offsetX;
             const type = selectedBar.attributes.type.value;
+            const percent = calculateWidthToPercent(timelineWidth, x, barWidth, moveType);
             switch (type) {
                 case "current": {
-                    const percent = calculateWidthToPercent(timelineWidth, x, barWidth, moveType);
                     videoPlayer.currentTime = percent * videoDuration;
                     setVideoCurrentTime(percent * videoDuration);
                     break;
                 }
                 case "in": {
-                    const percent = calculateWidthToPercent(timelineWidth, x, barWidth, moveType);
                     let time = percent * videoDuration > videoOutTime ? videoOutTime : percent * videoDuration;
                     videoPlayer.currentTime = time;
                     setVideoInTime(time);
                     break;
                 }
                 case "out": {
-                    const percent = calculateWidthToPercent(timelineWidth, x, barWidth, moveType);
                     let time = percent * videoDuration < videoInTime ? videoInTime : percent * videoDuration;
                     videoPlayer.currentTime = time;
                     setVideoOutTime(time);
@@ -277,14 +278,7 @@ const MalgnPlayer = ({ src, skim }) => {
         }
     }, [draggable, moveTypeInBar, selectedBar, videoPlayer, videoDuration, videoOutTime, videoInTime]);
 
-    const onTouchStart = useCallback((event) => {
-    }, []);
-    const onTouchMove = useCallback((event) => {
-    }, []);
-    const onTouchEnd = useCallback((event) => {
-    }, []);
-
-    /*
+    /**
      * [2-7] 타임라인 '안' 에서 Mouse Up
      */
     const mouseUpInComponent = useCallback(() => {
@@ -292,7 +286,7 @@ const MalgnPlayer = ({ src, skim }) => {
         setMoveTypeInBar("center");
     }, []);
 
-    /*
+    /**
      * [2-8] 타임라인 '밖' 에서 Mouse Up
      */
     const mouseEnterComponent = useCallback((event) => {
@@ -310,14 +304,14 @@ const MalgnPlayer = ({ src, skim }) => {
         }
     }, [draggable]);
 
-    /*
-     * [2-9] 우클릭 방지
+    /**
+     * [2-10] 우클릭 방지
      */
     const contextMenuInComponent = useCallback((event) => {
         event.preventDefault();
     }, []);
 
-    const mouseDownInTopTimeline = useCallback((event) => {
+    const mouseDownInSeekBar = useCallback((event) => {
         const { nativeEvent, target, currentTarget } = event;
         const { offsetX } = nativeEvent;
         const timelineWidth = currentTarget.offsetWidth;
@@ -338,18 +332,22 @@ const MalgnPlayer = ({ src, skim }) => {
         // console.log({videoPlayer: videoPlayer});
         setVideoVolume(percent * 100);
         videoPlayer.volume = percent;
-    });
+    }, [videoPlayer]);
 
     const changeVolume = useCallback((event, volume) => {
         videoPlayer.volume = volume;
         setVideoVolume(volume * 100.00);
     }, [videoPlayer]);
 
-    /*
+    /**
      *  [4] 단축키
+     *  - shiftKey + C : 현재 시간 Bar 선택
+     *  - shiftKey + I : In 포인트 Bar 선택
+     *  - shiftKey + O : Out 포인트 Bar 선택
+     *  - space : 재생
+     *  - 방향키 Up, Down : 미세조정 값 변경
+     *  - 방향키 Right, Left : 영상 현재 시간 변경
      */
-    // shiftKey, altKey, ctrlKey
-    // i = 73, o = 79, MacFunction = 91
     const keyDown = useCallback((event) => {
         const { keyCode, ctrlKey, altKey, shiftKey, target, currentTarget } = event;
         console.log({ keyCode: keyCode });
@@ -404,10 +402,10 @@ const MalgnPlayer = ({ src, skim }) => {
             // [왼쪽 방향키]
             case 37: {
                 if (type === "current") {
-                    videoPlayer.currentTime -= timeControlVolume;
+                    videoPlayer.currentTime -= detailedTime;
                 }
                 if (type === "in") {
-                    let time = videoInTime - timeControlVolume;
+                    let time = videoInTime - detailedTime;
                     if (time <= 0) {
                         time = 0;
                     }
@@ -415,7 +413,7 @@ const MalgnPlayer = ({ src, skim }) => {
                     setVideoInTime(time);
                 }
                 if (type === "out") {
-                    let time = videoOutTime - timeControlVolume;
+                    let time = videoOutTime - detailedTime;
                     if (time <= videoInTime) {
                         time = videoInTime;
                     }
@@ -426,18 +424,18 @@ const MalgnPlayer = ({ src, skim }) => {
             }
             // [위 방향키]
             case 38: {
-                let timeControl = parseFloat((timeControlVolume + 0.1).toFixed(2));
+                let detailedTimeValue = parseFloat((detailedTime + 0.1).toFixed(2));
 
-                setTimeControlVolume(timeControl);
+                setDetailedTime(detailedTimeValue);
                 break;
             }
             // [오른쪽 방향키]
             case 39: {
                 if (type === "current") {
-                    videoPlayer.currentTime += timeControlVolume;
+                    videoPlayer.currentTime += detailedTime;
                 }
                 if (type === "in") {
-                    let time = videoInTime + timeControlVolume;
+                    let time = videoInTime + detailedTime;
                     if (time >= videoOutTime) {
                         time = videoOutTime;
                     }
@@ -445,7 +443,7 @@ const MalgnPlayer = ({ src, skim }) => {
                     setVideoInTime(time);
                 }
                 if (type === "out") {
-                    let time = videoOutTime + timeControlVolume
+                    let time = videoOutTime + detailedTime
                     if (time >= videoDuration) {
                         time = videoDuration;
                     }
@@ -457,62 +455,69 @@ const MalgnPlayer = ({ src, skim }) => {
             }
             // [아래 방향키]
             case 40: {
-                let timeControl = parseFloat((timeControlVolume - 0.1).toFixed(2));
-                if (timeControl <= 0) {
-                    timeControl = 0;
+                let detailedTimeValue = parseFloat((detailedTime - 0.1).toFixed(2));
+                if (detailedTimeValue <= 0) {
+                    detailedTimeValue = 0;
                 }
-                setTimeControlVolume(timeControl);
+                setDetailedTime(detailedTimeValue);
                 break;
             }
 
             default:
                 break;
         }
-    }, [currentTimeBar, inTimeBar, outTimeBar, selectedBar, timeControlVolume, videoDuration, videoInTime, videoOutTime, videoPlayer]);
+    }, [currentTimeBar, inTimeBar, outTimeBar, selectedBar, detailedTime, videoDuration, videoInTime, videoOutTime, videoPlayer]);
 
-    const onWheel = useCallback((event) => {
+    const changeDetailedTime = useCallback((event) => {
         const { deltaX, deltaY, deltaZ, nativeEvent } = event;
-        let timeControl = parseFloat((timeControlVolume + deltaY * 0.1).toFixed(2))
-        if (timeControl <= 0) {
-            timeControl = 0;
+        let detailedTimeValue = parseFloat((detailedTime + deltaY * 0.1).toFixed(2))
+        if (detailedTimeValue <= 0) {
+            detailedTimeValue = 0;
         }
-        setTimeControlVolume(timeControl);
-    }, [timeControlVolume]);
+        setDetailedTime(detailedTimeValue);
+    }, [detailedTime]);
+
+
+    /**
+     * [모바일 Event]
+     *  - 추후 작업 예정
+     */
+    const onTouchStart = useCallback((event) => {
+    }, []);
+    const onTouchMove = useCallback((event) => {
+    }, []);
+    const onTouchEnd = useCallback((event) => {
+    }, []);
 
     return (
         <MalgnPlayerContainer
+            tabIndex="0"
             onContextMenu={contextMenuInComponent}
             onMouseUp={mouseUpInComponent}
             onMouseLeave={mouseLeaveComponent}
             onMouseEnter={mouseEnterComponent}
-            onWheel={onWheel}
+            onWheel={changeDetailedTime}
             onKeyDown={keyDown}
-            tabIndex="0"
         >
             <div className="video-container">
                 <VideoContent
                     src={src}
+                    percent={currentTimePercent}
+
                     onTimeUpdate={onTimeUpdate}
                     onLoadedMetadata={onLoadedMetadata}
-                    setVideoReadyState={setVideoReadyState}
-                    percent={currentTimePercent}
-                    className=""
+                    onChangeReadyState={setVideoReadyState}
                 />
                 <VideoCover
-                    className=""
-                    onPlayFull={onPlayFull}
-                    onMouseDownInVolume={mouseDownInVolume}
-                    onMouseDownInTimeline={mouseDownInTopTimeline}
-                    onChangeVolume={changeVolume}
-                    onPlaySection={onPlaySection}
-                    
-                    setBottomCoverView={setBottomCoverView}
-                    setHoldBottomCoverView={setHoldBottomCoverView}
-
-                    bottomCoverView={bottomCoverView}
-                    holdBottomCoverView={holdBottomCoverView}
-
                     isPlayed={isPlayed}
+                    percent={currentTimePercent}
+                    currentTime={videoCurrentTime}
+                    duration={videoDuration}
+                    volume={videoVolume}
+                    detailedTime={detailedTime}
+                    readyState={videoReadyState}
+                    isBottomCover={isBottomCover}
+                    isHoldBottomCover={isHoldBottomCover}
                     button={{
                         play: playButton1,
                         pause: pauseButton1,
@@ -523,11 +528,15 @@ const MalgnPlayer = ({ src, skim }) => {
                             volumeButton3,
                         ]
                     }}
-                    percent={currentTimePercent}
-                    currentTime={videoCurrentTime}
-                    duration={videoDuration}
-                    volume={videoVolume}
-                    readyState={videoReadyState}
+
+                    onPlayFull={onPlayFull}
+                    onPlaySection={onPlaySection}
+                    onMouseDownInVolume={mouseDownInVolume}
+                    onMouseDownInSeekBar={mouseDownInSeekBar}
+                    onChangeVolume={changeVolume}
+            
+                    onChangeBottomCoverView={setIsBottomCover}
+                    onChangeHoldBottomCoverView={setIsHoldBottomCover}
                 />
 
             </div>
@@ -535,6 +544,9 @@ const MalgnPlayer = ({ src, skim }) => {
                 <VideoTimeline
                     skim={skim}
                     isPlayed={isPlayed}
+                    currentTime={calculateTime(videoCurrentTime)}
+                    inTime={calculateTime(videoInTime)}
+                    outTime={calculateTime(videoOutTime)}
                     currentTimePercent={currentTimePercent}
                     inTimePercent={inTimePercent}
                     outTimePercent={outTimePercent}
@@ -564,7 +576,7 @@ const MalgnPlayer = ({ src, skim }) => {
                 inTimePercent={inTimePercent}
                 outTime={videoOutTime}
                 outTimePercent={outTimePercent}
-                timeControlVolume={timeControlVolume}
+                detailedTime={detailedTime}
                 selectedBar={selectedBar}
                 calculateTime={calculateTime}
             />

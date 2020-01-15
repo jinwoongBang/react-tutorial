@@ -28,7 +28,7 @@ const ProgressPrint = ({
     inTime,
     outTimePercent,
     outTime,
-    timeControlVolume,
+    detailedTime,
     selectedBar,
 }) => {
 
@@ -52,7 +52,7 @@ const ProgressPrint = ({
                             <td>{calculateTime(currentTime)}</td>
                             <td>{calculateTime(inTime)}</td>
                             <td>{calculateTime(outTime)}</td>
-                            <td rowSpan={3}>{timeControlVolume} s</td>
+                            <td rowSpan={3}>{detailedTime} s</td>
                             <td
                                 rowSpan={3}
                                 style={{"color": "blue", "fontWeight": "bold"}}
