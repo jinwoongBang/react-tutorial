@@ -28,7 +28,6 @@ const VideoTimelineContainer = styled.div`
         height: 100%;
         overflow: hidden;
         box-shadow: 0 10px 10px 0 gray;
-        border-radius: 0 0 10px 10px;
         background-color: rgb(0, 0, 0, 1.0);
     }
     .time-img {
@@ -47,7 +46,6 @@ const VideoTimelineContainer = styled.div`
         right: 0;
         width: 100%;
         height: 100%;
-        border-radius: 0 0 10px 10px;
     }
     .in-and-out-container {
         position: absolute;
@@ -59,7 +57,6 @@ const VideoTimelineContainer = styled.div`
         border: 4px solid rgb(255, 8, 0, 0.5);
         /* border: 5px solid #FFC2C2; */
         opacity: 1.0;
-        border-radius: 0 0 10px 10px;
     }
     
 `;

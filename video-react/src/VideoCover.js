@@ -267,7 +267,7 @@ const VideoCover = ({
                 </div>
                 <div className="">
                     <ProgressBar
-                        className="radius"
+                        className=""
                         percent={percent}
                         onMouseDown={onMouseDownInSeekBar}
                         color="red"
@@ -306,7 +306,7 @@ const VideoCover = ({
                                         : <img src={button.volumes[0]} onClick={onChangeVideoVolume} alt="" />}
                             <div className="video-volume">
                                 <ProgressBar
-                                    className="radius"
+                                    className=""
                                     percent={volume}
                                     color="white"
                                     onMouseDown={onMouseDownInVolume}

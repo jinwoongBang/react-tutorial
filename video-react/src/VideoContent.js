@@ -10,8 +10,7 @@ const VideoContentContainer = styled.div`
     video {
         width: 100%;
         height: auto;
-        display:block; 
-        border-radius: 10px 10px 0 0;
+        display:block;
     }
 `;
 
