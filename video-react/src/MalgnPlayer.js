@@ -508,66 +508,6 @@ const MalgnPlayer = ({ src, skim }) => {
                     onLoadedMetadata={onLoadedMetadata}
                     onChangeReadyState={setVideoReadyState}
                 />
-                <VideoCover
-                    isPlayed={isPlayed}
-                    percent={currentTimePercent}
-                    currentTime={videoCurrentTime}
-                    duration={videoDuration}
-                    volume={videoVolume}
-                    detailedTime={detailedTime}
-                    readyState={videoReadyState}
-                    isBottomCover={isBottomCover}
-                    isHoldBottomCover={isHoldBottomCover}
-                    button={{
-                        play: playButton1,
-                        pause: pauseButton1,
-                        volumes: [
-                            volumeButton0,
-                            volumeButton1,
-                            volumeButton2,
-                            volumeButton3,
-                        ]
-                    }}
-
-                    onPlayFull={onPlayFull}
-                    onPlaySection={onPlaySection}
-                    onMouseDownInVolume={mouseDownInVolume}
-                    onMouseDownInSeekBar={mouseDownInSeekBar}
-                    onChangeVolume={changeVolume}
-            
-                    onChangeBottomCoverView={setIsBottomCover}
-                    onChangeHoldBottomCoverView={setIsHoldBottomCover}
-                />
-
-            </div>
-            <div className="timeline-container">
-                <VideoTimeline
-                    skim={skim}
-                    isPlayed={isPlayed}
-                    currentTime={calculateTime(videoCurrentTime)}
-                    inTime={calculateTime(videoInTime)}
-                    outTime={calculateTime(videoOutTime)}
-                    currentTimePercent={currentTimePercent}
-                    inTimePercent={inTimePercent}
-                    outTimePercent={outTimePercent}
-                    onMouseDownInTimeline={mouseDownInBottomTimeline}
-                    onMouseDownCurrentBar={mouseDownCurrentBar}
-                    onMouseDownInBar={mouseDownInBar}
-                    onMouseDownOutBar={mouseDownOutBar}
-                    onMouseMoveInComponent={mouseMoveInComponent}
-                    onMouseMoveInBar={mouseMoveInBar}
-
-                    onTouchStart={onTouchStart}
-                    onTouchMove={onTouchMove}
-                    onTouchEnd={onTouchEnd}
-
-                    setCurrentTimeBar={setCurrentTimeBar}
-                    setInTimeBar={setInTimeBar}
-                    setOutTimeBar={setOutTimeBar}
-                />
-            </div>
-            <div style={{ "height": "2vw" }}>
-
             </div>
             <ProgressPrint
                 currentTime={videoCurrentTime}
