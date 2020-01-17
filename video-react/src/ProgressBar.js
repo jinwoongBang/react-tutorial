@@ -1,42 +1,86 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 
 const ProgressBarContainer = styled.div`
     box-sizing: border-box;
     position: relative;
-    z-index: 4;
     top: 0%;
-    left: 2.5%;
-    width: 95%;
+    left: 0%;
+    width: 100%;
     height: 0.5vw;
     
-    background-color: rgb(255,255,255, 0.3);
-    
-    .video-progress-bar {
+    background-color: rgb(0, 0, 0, 0.2);
+    /* border: 1px solid tomato; */
+
+    .progress-bar-cover {
         position: absolute;
+        z-index: 3;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* background-color: rgb(255, 255, 255, 0.5); */
+    }
+
+    .progress-bar {
+        position: relative;
+        z-index: 1;
         top: 0;
         width: 0%;
         height: 100%;
-        border-radius: 10px 10px 10px 10px;
-        opacity: 1.0 !important;
+        opacity: 1.0;
+    }
+    .hover-point {
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        width: 0.1%;
+        height: 100%;
+        background-color: rgb(255, 255, 255, 1.0);
     }
 `;
 
 const ProgressBar = ({
     percent,
     color,
-    onMouseDown
+    hoverPointX,
+    hoverPointView,
+    onMouseDown,
+    onMouseMoveInProgressBar,
+    onMouseEnterInProgressBar,
+    onMouseLeaveInProgressBar,
+    onMouseMoveInHoverPoint,
 }) => {
+    const hoverPointRef = useRef(null);
+
     return (
         <ProgressBarContainer
             onMouseDown={onMouseDown}
+            onMouseEnter={onMouseEnterInProgressBar}
+            onMouseLeave={onMouseLeaveInProgressBar}
+            onMouseMove={onMouseMoveInProgressBar}
+            style={{
+                "backgroundColor": "rgb(54, 55, 56)"
+            }}
         >
+            <div className="progress-bar-cover">
+
+            </div>
             <div
-                className="video-progress-bar"
+                className="progress-bar"
                 style={{
                     "width": percent + "%",
                     "backgroundColor": color
                 }}
+            />
+            <div
+                ref={hoverPointRef}
+                className="hover-point"
+                style={{
+                    "left": hoverPointX + "%",
+                    "backgroundColor": "rgb(255, 255, 255, " + (hoverPointView ? 1.0 : 0.0) + ")"
+                }}
+                onMouseMove={onMouseMoveInHoverPoint}
             />
         </ProgressBarContainer>
     )

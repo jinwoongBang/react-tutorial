@@ -5,20 +5,17 @@ import styled from 'styled-components';
 import VideoContent from './VideoContent';
 import VideoCover from './VideoCover';
 import ProgressPrint from './ProgressPrint';
-import VideoTimeline from './VideoTimeline';
 import ProgressBar from './ProgressBar';
 
-import { calculateTime, calculateWidthToPercent} from './util/CommonUtils';
+import { calculateTime, calculateWidthToPercent } from './util/CommonUtils';
+import { Constants } from './util/Constants';
 
 
-import playButton from './image/play01.png';
-import playButton1 from './image/play-button-white-08.png';
-import pauseButton from './image/pause02.png';
-import pauseButton1 from './image/play-button-white-09.png';
-import volumeButton0 from './image/volume-button-white-0.png';
-import volumeButton1 from './image/volume-button-white-1.png';
-import volumeButton2 from './image/volume-button-white-2.png';
-import volumeButton3 from './image/volume-button-white-3.png';
+import playButton from './image/play-button-white-01.png';
+import sectionPlayButton from './image/section-play-button.png';
+import pauseButton from './image/play-button-white-02.png';
+import volumeButton from './image/volume-button-white-3.png';
+import pin from './image/in-out-pin.png';
 
 const MalgnPlayerContainer = styled.div`
     padding: 20px 20px 20px 20px;
@@ -50,12 +47,71 @@ const MalgnPlayerContainer = styled.div`
     .radius {
         border-radius: 10px 10px 10px 10px;
     }
-    .video-container {
+    .video-top-container {
         position: relative;
     }
-    .timeline-container {
+
+    .video-bottom-container {
         position: relative;
-        height: 14vw;
+        height: 7vw;
+        /* border: 1px solid tomato; */
+        /* background-color: black; */
+
+        .progress-bar-container {
+            /* border: 1px solid tomato; */
+        }
+        .in-out-container {
+            position: relative;
+            height: 20.00%;
+            border: 1px solid black;
+            background-color: rgb(43, 47, 59);
+            
+            .in-point {
+                position: absolute;
+                top: 0;
+                left: 0%;
+                height: 70%;
+                transform: rotateX(180deg);
+                /* border: 1px solid white; */
+            }
+            .out-point {
+                position: absolute;
+                top: 0;
+                left: 100%;
+                height: 70%;
+                transform: rotateX(180deg);
+                /* border: 1px solid white; */
+            }
+        }
+        .function-container {
+            display: flex;
+            height: 33.33%;
+            /* border: 1px solid black; */
+            background-color: rgb(43, 47, 59);
+
+            .play-button-container, .section-play-button-container {
+                position: relative;
+                top: 0;
+                height: 100%;
+            }
+            .play-button-container > img, .section-play-button-container > img {
+                width: auto;
+                height: 100%;
+                /* border: 1px solid tomato; */
+            }
+            .time-container {
+                width: auto;
+                height: 100%;
+                /* border: 1px solid tomato; */
+                color: white;
+            }
+            .time-container > span {
+                position: relative;
+                top: 20%;
+                /* border: 1px solid tomato; */
+            }
+
+        }
     }
 `;
 
@@ -73,7 +129,7 @@ const MalgnPlayer = ({ src, skim }) => {
     const [videoReadyState, setVideoReadyState] = useState(false);
     const [isPlayed, setIsPlayed] = useState(false);
     // "full" : 전체 재생, "section" : 구간 재생
-    const [videoPlayMode, setVideoPlayMode] = useState("full");
+    const [videoPlayMode, setVideoPlayMode] = useState(Constants.PLAY_TYPE.FULL);
     const [draggable, setDraggable] = useState(false);
 
     const [selectedBar, setSelectedBar] = useState(null);
@@ -81,18 +137,20 @@ const MalgnPlayer = ({ src, skim }) => {
     const [inTimeBar, setInTimeBar] = useState(null);
     const [outTimeBar, setOutTimeBar] = useState(null);
 
+
     // "center" : 타임라인을 클릭하여 현재 시간을 변경 할 경우
     // "left"   : 시간 표시 막대를 왼쪽으로 움직이는 중
     // "right"   : 시간 표시 막대의 오른쪽으로 움직이는 중
-    const [moveTypeInBar, setMoveTypeInBar] = useState("center");
-    
+    const [moveTypeInBar, setMoveTypeInBar] = useState(Constants.MOVE_TYPE.CENTER);
+    const [moveType, setMoveType] = useState(Constants.MOVE_TYPE.CENTER);
+
     const [videoCurrentTime, setVideoCurrentTime] = useState(0.00);
     const [videoInTime, setVideoInTime] = useState(0.00);
     const [videoOutTime, setVideoOutTime] = useState(0.00);
     const [videoDuration, setVideoDuration] = useState(0.00);
     const [videoVolume, setVideoVolume] = useState(0.00);
     const [detailedTime, setDetailedTime] = useState(1);
-    
+
     /**
      * [2] Mobile 상태
      */
@@ -105,18 +163,26 @@ const MalgnPlayer = ({ src, skim }) => {
     const [isBottomCover, setIsBottomCover] = useState(false);
     const [isHoldBottomCover, setIsHoldBottomCover] = useState(false);
 
+
     useEffect(() => {
         console.log('videoPlayMode : ', videoPlayMode);
         return () => {
         }
     }, [videoPlayMode]);
+    useEffect(() => {
+        console.log({ videoDuration: videoDuration });
+        return () => {
+        }
+    }, [videoDuration]);
 
     /**
      * [0] 비디오 메타데이터 최초 로드 및 상태 초기화(init)
      */
     const onLoadedMetadata = useCallback((player) => {
         const { duration, readyState, volume } = player;
+        console.log({ player: player })
         setVideoPlayer(player);
+        console.log(duration);
         setVideoDuration(duration);
         setVideoOutTime(duration);
         setVideoVolume(volume);
@@ -134,7 +200,7 @@ const MalgnPlayer = ({ src, skim }) => {
         const { paused } = videoPlayer;
         paused ? videoPlayer.play() : videoPlayer.pause();
         setIsPlayed(!videoPlayer.paused);
-        setVideoPlayMode("full");
+        setVideoPlayMode(Constants.PLAY_TYPE.FULL);
     }, [videoPlayer]);
 
     /**
@@ -150,7 +216,7 @@ const MalgnPlayer = ({ src, skim }) => {
             videoPlayer.pause();
             setIsPlayed(false);
         }
-        setVideoPlayMode("section");
+        setVideoPlayMode(Constants.PLAY_TYPE.SECTION);
     }, [videoInTime, videoPlayer]);
 
     /**
@@ -159,7 +225,7 @@ const MalgnPlayer = ({ src, skim }) => {
     const onTimeUpdate = useCallback((player) => {
         setVideoCurrentTime(player.currentTime);
         // 구간 재생일 경우 Out Time 에서 일시정지
-        if (videoPlayMode === "section") {
+        if (videoPlayMode === Constants.PLAY_TYPE.SECTION) {
             if (player.currentTime > videoOutTime) {
                 player.pause();
                 setIsPlayed(false);
@@ -205,7 +271,7 @@ const MalgnPlayer = ({ src, skim }) => {
             setDraggable(true);
             setVideoReadyState(false);
         }
-        
+
     }, [currentTimeBar, moveTypeInBar, videoDuration, videoPlayer]);
 
     /**
@@ -283,23 +349,24 @@ const MalgnPlayer = ({ src, skim }) => {
      */
     const mouseUpInComponent = useCallback(() => {
         setDraggable(false);
-        setMoveTypeInBar("center");
+        setMoveTypeInBar(Constants.MOVE_TYPE.CENTER);
     }, []);
 
-    /**
-     * [2-8] 타임라인 '밖' 에서 Mouse Up
-     */
+
     const mouseEnterComponent = useCallback((event) => {
         event.currentTarget.addEventListener("wheel", (event) => {
             event.preventDefault();
         }, { passive: false, once: false })
     }, []);
 
+    /**
+     * [2-8] 타임라인 '밖' 에서 Mouse Up
+     */
     const mouseLeaveComponent = useCallback(() => {
         if (draggable) {
             window.addEventListener("mouseup", (event) => {
                 setDraggable(false);
-                setMoveTypeInBar("center");
+                setMoveTypeInBar(Constants.MOVE_TYPE.CENTER);
             })
         }
     }, [draggable]);
@@ -311,23 +378,12 @@ const MalgnPlayer = ({ src, skim }) => {
         event.preventDefault();
     }, []);
 
-    const mouseDownInSeekBar = useCallback((event) => {
-        const { nativeEvent, target, currentTarget } = event;
-        const { offsetX } = nativeEvent;
-        const timelineWidth = currentTarget.offsetWidth;
-        const percent = calculateWidthToPercent(
-            timelineWidth, offsetX, 1, "center"
-        );
-        setVideoCurrentTime(percent * videoDuration);
-        videoPlayer.currentTime = percent * videoDuration;
-    });
-
     const mouseDownInVolume = useCallback((event) => {
         console.log("mouseDownInVolume()");
         const { nativeEvent, target, currentTarget } = event;
         const { offsetX } = nativeEvent;
         const timelineWidth = currentTarget.offsetWidth;
-        const percent = calculateWidthToPercent(timelineWidth, offsetX, 1, "center");
+        const percent = calculateWidthToPercent(timelineWidth, offsetX, 1, Constants.MOVE_TYPE.CENTER);
         console.log("percent : ", percent * 100);
         // console.log({videoPlayer: videoPlayer});
         setVideoVolume(percent * 100);
@@ -389,7 +445,7 @@ const MalgnPlayer = ({ src, skim }) => {
             // [스페이스 바]
             case 32: {
                 const { paused } = videoPlayer;
-                setVideoPlayMode("full");
+                setVideoPlayMode(Constants.PLAY_TYPE.FULL);
                 if (paused) {
                     setIsPlayed(paused);
                     videoPlayer.play();
@@ -489,6 +545,111 @@ const MalgnPlayer = ({ src, skim }) => {
     const onTouchEnd = useCallback((event) => {
     }, []);
 
+    /**
+     * [Frame IO 작업]
+     */
+    const inPoint = useRef(null);
+    const outPoint = useRef(null);
+
+    const [hoverPointX, setHoverPointX] = useState(0);
+    const [hoverPointView, setHoverPointView] = useState(false);
+
+    const mouseDownInProgressBar = useCallback((event) => {
+        const { nativeEvent, target, currentTarget } = event;
+        const { offsetX } = nativeEvent;
+        const timelineWidth = currentTarget.offsetWidth;
+        const percent = calculateWidthToPercent(
+            timelineWidth, offsetX, 1, Constants.MOVE_TYPE.CENTER
+        );
+        // console.log("percent : ", percent);
+        setVideoCurrentTime(percent * videoDuration);
+        setDraggable(true);
+        videoPlayer.pause();
+        videoPlayer.currentTime = percent * videoDuration;
+
+    }, [videoDuration, videoPlayer]);
+
+    const mouseDownInPoint = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        setDraggable(true);
+        setSelectedBar(currentTarget);
+        console.log({ currentTarget: currentTarget });
+    }, []);
+
+    const mouseDownOutPoint = useCallback(({ screenX, clientX, pageX, target, currentTarget }) => {
+        setDraggable(true);
+        setSelectedBar(currentTarget);
+        console.log({ currentTarget: currentTarget });
+    }, []);
+
+    const mouseMoveInProgressBar = useCallback((event) => {
+        const { nativeEvent, target, currentTarget } = event;
+        const { offsetX } = nativeEvent;
+        const progressWidth = currentTarget.offsetWidth;
+        const percent = calculateWidthToPercent(
+            progressWidth, offsetX, 1, moveType
+        );
+        setHoverPointX(percent * 100);
+
+        if (draggable) {
+            setVideoCurrentTime(percent * videoDuration);
+            videoPlayer.currentTime = percent * videoDuration;
+        }
+    }, [draggable, moveType, videoDuration, videoPlayer]);
+
+    const mouseMoveInPoint = useCallback((event) => {
+        const { nativeEvent } = event;
+
+        if (nativeEvent.movementX > 0) {
+            setMoveType(Constants.MOVE_TYPE.RIGHT);
+            // console.log(Constants.MOVE_TYPE.RIGHT);
+        }
+        if (nativeEvent.movementX < 0) {
+            setMoveType(Constants.MOVE_TYPE.LEFT);
+            // console.log(Constants.MOVE_TYPE.LEFT);
+        }
+    }, []);
+
+    const mouseMoveInOutContainer = useCallback((event) => {
+        const { target, currentTarget, nativeEvent } = event;
+        if ((target !== inPoint.current) && (target !== outPoint.current)) {
+            console.log("move in inPoint");
+
+            if (draggable) {
+                const containerWidth = currentTarget.offsetWidth;
+                const pointWidth = selectedBar.offsetWidth;
+                const pointType = selectedBar.attributes.type.value;
+                const x = nativeEvent.offsetX;
+                switch (pointType) {
+                    case Constants.COMPONENT_TYPE.IN_POINT: {
+                        const percent = calculateWidthToPercent(containerWidth, x, pointWidth, moveType);
+                        // console.log("in percent : ", percent);
+                        setVideoInTime(videoDuration * percent);
+                        break;
+                    }
+                    case Constants.COMPONENT_TYPE.OUT_POINT: {
+                        const percent = calculateWidthToPercent(containerWidth, x, pointWidth, moveType);
+                        // console.log("out percent : ", percent);
+                        setVideoOutTime(videoDuration * percent);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+        }
+    }, [draggable, inPoint, moveType, selectedBar, videoDuration]);
+
+    const mouseEnterInProgressBar = useCallback(() => {
+        setHoverPointView(true);
+    }, []);
+    const mouseLeaveInProgressBar = useCallback(() => {
+        setHoverPointView(false);
+    }, []);
+
+    const hoverPointTime = useMemo(() => {
+        return videoDuration * hoverPointX / 100;
+    }, [hoverPointX, videoDuration]);
+
     return (
         <MalgnPlayerContainer
             tabIndex="0"
@@ -496,10 +657,9 @@ const MalgnPlayer = ({ src, skim }) => {
             onMouseUp={mouseUpInComponent}
             onMouseLeave={mouseLeaveComponent}
             onMouseEnter={mouseEnterComponent}
-            onWheel={changeDetailedTime}
             onKeyDown={keyDown}
         >
-            <div className="video-container">
+            <div className="video-top-container">
                 <VideoContent
                     src={src}
                     percent={currentTimePercent}
@@ -508,6 +668,81 @@ const MalgnPlayer = ({ src, skim }) => {
                     onLoadedMetadata={onLoadedMetadata}
                     onChangeReadyState={setVideoReadyState}
                 />
+                <VideoCover
+                    isPlayed={isPlayed}
+                    readyState={videoReadyState}
+                    hoverPointView={hoverPointView}
+                    hoverPointX={hoverPointX}
+                    hoverPointTime={hoverPointTime}
+                    button={{
+                        play: playButton,
+                        pause: pauseButton
+                    }}
+                    onPlayFull={onPlayFull}
+                />
+            </div>
+            <div className="video-bottom-container">
+                <div className="progress-bar-container">
+                    <ProgressBar
+                        onMouseDown={mouseDownInProgressBar}
+                        onMouseMoveInProgressBar={mouseMoveInProgressBar}
+                        onMouseMoveInHoverPoint={mouseMoveInPoint}
+                        onMouseEnterInProgressBar={mouseEnterInProgressBar}
+                        onMouseLeaveInProgressBar={mouseLeaveInProgressBar}
+                        hoverPointX={hoverPointX}
+                        hoverPointView={hoverPointView}
+                        percent={currentTimePercent}
+                        color="rgb(91, 83, 255)"
+                    />
+                </div>
+                <div
+                    className="in-out-container"
+                    onMouseMove={mouseMoveInOutContainer}
+                >
+                    <img
+                        ref={inPoint}
+                        className="in-point"
+                        src={pin}
+                        alt=""
+                        draggable={false}
+                        type={Constants.COMPONENT_TYPE.IN_POINT}
+                        style={{
+                            "left": inTimePercent + "%",
+                        }}
+                        onMouseDown={mouseDownInPoint}
+                        onMouseMove={mouseMoveInPoint}
+                    // onMouseEnter={() => {
+                    //     setVideoInTime()
+                    // }}
+                    />
+                    <img
+                        ref={outPoint}
+                        className="out-point"
+                        src={pin}
+                        alt=""
+                        draggable={false}
+                        type={Constants.COMPONENT_TYPE.OUT_POINT}
+                        style={{
+                            "left": outTimePercent + "%",
+                        }}
+                        onMouseDown={mouseDownOutPoint}
+                        onMouseMove={mouseMoveInPoint}
+                    />
+                </div>
+                <div className="function-container">
+                    <div className="play-button-container">
+                        <img src={playButton} alt="" className="play-button" />
+                    </div>
+                    <div className="section-play-button-container">
+                        <img src={sectionPlayButton} alt="" className="play-button" />
+                    </div>
+                    <div className="time-container">
+                        <span>{calculateTime(currentTimePercent).substring(0, 8)} / {calculateTime(videoDuration).substring(0, 8)}</span>
+                    </div>
+                </div>
+            </div>
+            <div style={{ "height": "2vw" }}>
+
             </div>
             <ProgressPrint
                 currentTime={videoCurrentTime}

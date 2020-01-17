@@ -10,17 +10,15 @@ const VideoContentContainer = styled.div`
     video {
         width: 100%;
         height: auto;
-        display:block;
+        display: block;
     }
 `;
 
 const VideoContent = ({
+    src,
     onTimeUpdate,
     onLoadedMetadata,
     onChangeReadyState,
-
-    src,
-    percent
 }) => {
 
     const videoRef = useRef(null);
@@ -31,12 +29,18 @@ const VideoContent = ({
 
     const onTimeUpdateVideo = useCallback(() => {
         const player = videoRef.current;
+        // console.log("buffered : ", player.buffered);
+        // console.log({player: player.webkitDecodedFrameCount});
+        // console.log({webkitDecodedFrameCount: player.webkitDecodedFrameCount});
+        // console.log({webkitAudioDecodedByteCount: player.webkitAudioDecodedByteCount});
+        // console.log({webkitVideoDecodedByteCount: player.webkitVideoDecodedByteCount});
         onTimeUpdate(player);
     }, [onTimeUpdate]);
 
     const onLoadedVideoMetadata = useCallback(() => {
         const player = videoRef.current;
         onLoadedMetadata(player);
+        // console.log("onLoadedVideoMetadata : ", player.duration);
     }, [onLoadedMetadata]);
 
     /**
@@ -62,7 +66,35 @@ const VideoContent = ({
                 preload="auto"
                 onTimeUpdate={onTimeUpdateVideo}
                 onLoadedMetadata={onLoadedVideoMetadata}
+                onLoadStart={() => {
+                    const player = videoRef.current;
+                    // console.log("onLoadStart : ", player.duration);
+                }}
                 onCanPlay={onCanPlay}
+                onCanPlayThrough={() => {
+                    const player = videoRef.current;
+                    // console.log("onCanPlayThrough : ", player.duration);
+                }}
+                onSuspend={() => {
+                    const player = videoRef.current;
+                    // console.log("onSuspend : ", player.duration);
+                }}
+                onLoadedData={() => {
+                    const player = videoRef.current;
+                    // console.log("onLoadedData : ", player.duration);
+                }}
+                onWaiting={() => {
+                    const player = videoRef.current;
+                    // console.log("onWaiting : ", player.duration);
+                }}
+                onSeeking={() => {
+                    const player = videoRef.current;
+                    // console.log("onSeeking : ", player.duration);
+                }}
+                onSeeked={() => {
+                    const player = videoRef.current;
+                    // console.log("onSeeked : ", player.duration);
+                }}
             >
                 <source src={src}></source>
             </video>

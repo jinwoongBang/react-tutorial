@@ -132,7 +132,7 @@ const App = () => {
           <Col span={18}>
             {/* <MalgnPlayer src={videoSource1} skim={imageSource} /> */}
             {/* <MalgnPlayer src="http://localhost:8080/upload/test.MOV" skim={imageSource} /> */}
-            <MalgnPlayer src="http://localhost:8080/upload/남자축구.mp4" skim={imageSource} />
+            <MalgnPlayer src="http://localhost:8080/upload/유출금지.mov" skim={imageSource} />
             {/* <MalgnPlayer src="https://youtu.be/wvebg9CQv_w" skim={imageSource} /> */}
           </Col>
         </Row>
