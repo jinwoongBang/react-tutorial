@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import ProgressBar from './ProgressBar';
@@ -13,6 +13,19 @@ const VideoCoverContainer = styled.div`
     left: 0;
     right: 0;
     /* border: 1px solid tomato; */
+    .deactive-opacity {
+        opacity: 0.0;
+    }
+    .active-opacity {
+        opacity: 1.0 ;
+    }
+    .d-none {
+        display: none;
+    }
+    .deactive-height {
+        height: 0;
+    }
+
 
     .loading-cover {
         position: absolute;
@@ -46,13 +59,7 @@ const VideoCoverContainer = styled.div`
         width: 5vw;
         height: 5vw;
     }
-    .deactive-opacity {
-        opacity: 0.0;
-    }
-    .active-opacity {
-        opacity: 1.0;
-    }
-
+    
     .hover-point-container {
         position: absolute;
         bottom: 2%;
@@ -63,7 +70,7 @@ const VideoCoverContainer = styled.div`
         overflow: hidden;
         border-radius: 7px 7px 7px 7px;
         box-shadow: 0 0 5px 0 black;
-        /* border: 1px solid tomato; */
+        transition: opacity .2s linear;
     }
     .hover-point-container > img {
         position: relative;
@@ -79,6 +86,32 @@ const VideoCoverContainer = styled.div`
         text-align: center;
         background-color: rgb(0, 0, 0, 0.2);
     }
+    .preference-container {
+        position: absolute;
+        z-index: 10;
+        bottom: -4%;
+        right: 8%;
+        width: 4vw;
+
+        background-color: rgb(43, 47, 59, 0.7);
+        border-radius: 7px 7px 7px 7px;
+        box-shadow: 0 0 5px 0 black;
+        transition: height 2.0s linear;
+        color: rgb(255, 255, 255, 0.5);
+    }
+    .preference-list {
+        /* border: 1px solid tomato; */
+    }
+    .preference-list > table {
+        /* border: 1px solid tomato; */
+        margin: auto;
+        text-align: center;
+        font-size: 1.0em;
+    }
+    .preference-list > table > tbody > tr > td:hover{
+        color: rgb(255, 255, 255, 1.0);
+    }
+
 `;
 
 const VideoCover = ({
@@ -88,20 +121,31 @@ const VideoCover = ({
     hoverPointView,
     hoverPointX,
     hoverPointTime,
+    playSpeedRateFormView,
+    playbackRate,
 
     onPlayFull,
+    onChangePlayBackRate,
 }) => {
 
-    const onPlayInTopCover = useCallback((event) => {
+    useEffect(() => {
+        console.log("hoverPoint view : ", hoverPointView);
+    }, [hoverPointView]);
+
+    const playInTopCover = useCallback((event) => {
         onPlayFull(event);
     }, [onPlayFull]);
 
+    const changePlayBackRate = useCallback((event) => {
+        onChangePlayBackRate(event.currentTarget.attributes.rate.value);
+    }, [onChangePlayBackRate]);
+
     return (
         <VideoCoverContainer>
-            {readyState ? null : <div className="loading-cover">Loading...</div>}
+
             <div
                 className="video-play-cover"
-                onClick={onPlayInTopCover}
+                onClick={playInTopCover}
             >
                 <div
                     className={[
@@ -116,15 +160,46 @@ const VideoCover = ({
                 </div>
             </div>
             <div
-                className="hover-point-container"
+                className={[
+                    'hover-point-container',
+                    hoverPointView ? 'active-opacity' : 'deactive-opacity'
+                ].join(' ')}
                 style={{
-                    "left": hoverPointX + "%",
-                    "opacity": (hoverPointView ? 1.0 : 0.0)
+                    "left": hoverPointX + "%"
                 }}
             >
-                <img src={thumbnail}></img>
+                <img src={thumbnail} alt=""></img>
                 <div className="hover-point-time">
                     <span>{calculateTime(hoverPointTime).substring(0, 8)}</span>
+                </div>
+            </div>
+            <div
+                className={[
+                    'preference-container',
+                    !playSpeedRateFormView && 'd-none'
+                ].join(' ')}
+            >
+                <div className="preference-list">
+                    <table>
+                        <thead>
+
+                        </thead>
+                        <tbody>
+                            {[1, 2, 4, 8].map((element, index) => {
+                                return (
+                                    <tr key={element}>
+                                        <td
+                                            onClick={changePlayBackRate}
+                                            rate={element}
+                                            style={{"color": playbackRate === element && 'rgb(255, 255, 255, 1.0)'}}
+                                        >
+                                            {element}.0 배속
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </VideoCoverContainer>
