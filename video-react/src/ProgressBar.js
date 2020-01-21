@@ -1,14 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
+import { Constants } from './util/Constants';
+
 const ProgressBarContainer = styled.div`
-    box-sizing: border-box;
     position: relative;
     top: 0%;
     left: 0%;
     width: 100%;
-    height: 0.5vw;
-    
+    height: 10%;
+    box-sizing: border-box;
     background-color: rgb(0, 0, 0, 0.2);
     /* border: 1px solid tomato; */
 
@@ -49,9 +50,15 @@ const ProgressBar = ({
     onMouseMoveInProgressBar,
     onMouseEnterInProgressBar,
     onMouseLeaveInProgressBar,
-    onMouseMoveInHoverPoint,
+    onChangeMoveType,
+    setCurrentPoint
 }) => {
     const hoverPointRef = useRef(null);
+    const currentPointRef = useRef(null);
+
+    useEffect(() => {
+        setCurrentPoint(currentPointRef.current);
+    }, [setCurrentPoint]);
 
     return (
         <ProgressBarContainer
@@ -63,11 +70,13 @@ const ProgressBar = ({
                 "backgroundColor": "rgb(54, 55, 56)"
             }}
         >
-            <div className="progress-bar-cover">
-
-            </div>
             <div
+                className="progress-bar-cover"
+            />
+            <div
+                ref={currentPointRef}
                 className="progress-bar"
+                type={Constants.COMPONENT_TYPE.PROGRESS}
                 style={{
                     "width": percent + "%",
                     "backgroundColor": color
@@ -80,7 +89,7 @@ const ProgressBar = ({
                     "left": hoverPointX + "%",
                     "backgroundColor": "rgb(255, 255, 255, " + (hoverPointView ? 1.0 : 0.0) + ")"
                 }}
-                onMouseMove={onMouseMoveInHoverPoint}
+                onMouseMove={onChangeMoveType}
             />
         </ProgressBarContainer>
     )

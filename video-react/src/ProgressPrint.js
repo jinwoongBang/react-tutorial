@@ -28,7 +28,6 @@ const ProgressPrint = ({
     inTime,
     outTimePercent,
     outTime,
-    detailedTime,
     selectedBar,
 }) => {
 
@@ -43,7 +42,6 @@ const ProgressPrint = ({
                             <th>Current Time</th>
                             <th>In Time</th>
                             <th>Out Time</th>
-                            <th>미세 조정</th>
                             <th>Selected Bar</th>
                         </tr>
                     </thead>
@@ -52,7 +50,6 @@ const ProgressPrint = ({
                             <td>{calculateTime(currentTime)}</td>
                             <td>{calculateTime(inTime)}</td>
                             <td>{calculateTime(outTime)}</td>
-                            <td rowSpan={3}>{detailedTime} s</td>
                             <td
                                 rowSpan={3}
                                 style={{"color": "blue", "fontWeight": "bold"}}

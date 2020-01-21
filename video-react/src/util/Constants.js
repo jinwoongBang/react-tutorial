@@ -1,7 +1,6 @@
 export const Constants = {
     COMPONENT_TYPE: {
         PROGRESS: "PROGRESS",
-        BAR: "BAR",
         IN_POINT: "IN",
         OUT_POINT: "OUT",
     },
@@ -13,5 +12,9 @@ export const Constants = {
     PLAY_TYPE: {
         FULL: "FULL",
         SECTION: "SECTION"
+    },
+    DETAIL_TIME: {
+        MAIN: 5,
+        SUB: 1
     }
 };

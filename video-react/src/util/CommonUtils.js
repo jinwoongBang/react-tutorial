@@ -12,13 +12,13 @@ export const calculateWidthToPercent = (overallWidth, mouseX, barWidth, type) =>
         case Constants.MOVE_TYPE.CENTER:
             percent = (mouseX - barWidth * 0.5) / (overallWidth);
             break;
-        default:
-            if (percent < 0.00) {
-                percent = 0.00;
-            } else if (percent > 1.00) {
-                percent = 1.00;
-            }
+        default:    
             break;
+    }
+    if (percent <= 0) {
+        percent = 0;
+    } else if (percent >= 100) {
+        percent = 100;
     }
 
     return percent;

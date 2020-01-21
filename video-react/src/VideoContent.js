@@ -19,21 +19,20 @@ const VideoContent = ({
     onTimeUpdate,
     onLoadedMetadata,
     onChangeReadyState,
+    setVideoPlayer
 }) => {
 
     const videoRef = useRef(null);
 
-    useEffect(() => {
-        console.log("src : ", src);
-    }, [src]);
+    // useEffect(() => {
+    //     const video = videoRef.current;
+    //     console.log({video: video});
+    //     console.log({video: video.duration});
+    //     setVideoPlayer(video);
+    // }, [setVideoPlayer]);
 
     const onTimeUpdateVideo = useCallback(() => {
         const player = videoRef.current;
-        // console.log("buffered : ", player.buffered);
-        // console.log({player: player.webkitDecodedFrameCount});
-        // console.log({webkitDecodedFrameCount: player.webkitDecodedFrameCount});
-        // console.log({webkitAudioDecodedByteCount: player.webkitAudioDecodedByteCount});
-        // console.log({webkitVideoDecodedByteCount: player.webkitVideoDecodedByteCount});
         onTimeUpdate(player);
     }, [onTimeUpdate]);
 
@@ -55,6 +54,8 @@ const VideoContent = ({
         const player = videoRef.current;
         if(player.readyState !== 0) {
             onChangeReadyState(true);
+        } else {
+            onChangeReadyState(false);
         }
     }, [onChangeReadyState]);
 

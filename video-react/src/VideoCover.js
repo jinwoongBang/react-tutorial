@@ -91,7 +91,8 @@ const VideoCoverContainer = styled.div`
         z-index: 10;
         bottom: -4%;
         right: 8%;
-        width: 4vw;
+        width: 6vw;
+        padding: 0.5%;
 
         background-color: rgb(43, 47, 59, 0.7);
         border-radius: 7px 7px 7px 7px;
@@ -99,13 +100,16 @@ const VideoCoverContainer = styled.div`
         transition: height 2.0s linear;
         color: rgb(255, 255, 255, 0.5);
     }
+    thead {
+        border-bottom: 1px solid white;
+    }
     .preference-list {
         /* border: 1px solid tomato; */
     }
     .preference-list > table {
         /* border: 1px solid tomato; */
         margin: auto;
-        text-align: center;
+        text-align: left;
         font-size: 1.0em;
     }
     .preference-list > table > tbody > tr > td:hover{
@@ -128,9 +132,9 @@ const VideoCover = ({
     onChangePlayBackRate,
 }) => {
 
-    useEffect(() => {
-        console.log("hoverPoint view : ", hoverPointView);
-    }, [hoverPointView]);
+    // useEffect(() => {
+    //     console.log("hoverPoint view : ", hoverPointView);
+    // }, [hoverPointView]);
 
     const playInTopCover = useCallback((event) => {
         onPlayFull(event);
@@ -142,7 +146,6 @@ const VideoCover = ({
 
     return (
         <VideoCoverContainer>
-
             <div
                 className="video-play-cover"
                 onClick={playInTopCover}
@@ -182,10 +185,12 @@ const VideoCover = ({
                 <div className="preference-list">
                     <table>
                         <thead>
-
+                            <tr>
+                                <th>Playback Rate</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            {[1, 2, 4, 8].map((element, index) => {
+                            {[1, 1.25, 1.4, 1.5, 1.75].map((element, index) => {
                                 return (
                                     <tr key={element}>
                                         <td
@@ -193,7 +198,7 @@ const VideoCover = ({
                                             rate={element}
                                             style={{"color": playbackRate === element && 'rgb(255, 255, 255, 1.0)'}}
                                         >
-                                            {element}.0 배속
+                                            {element} x
                                         </td>
                                     </tr>
                                 )
