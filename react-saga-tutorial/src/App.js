@@ -1,31 +1,30 @@
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import * as counterActions from './modules/counter';
+import React from 'react';
+import { createStore, applyMiddleware, compose } from 'redux';
+import { Provider } from 'react-redux';
+import createSagaMiddleware from 'redux-saga';
 
-class App extends Component {
-  
-  render() {
-    const { CounterActions, number } = this.props;
-    console.log('test');
-    console.log(CounterActions);
-    return (
+import { Counter } from './Counter';
+import rootReducer from './store/modules';
+import rootSaga from './store/saga';
+
+const sagaMiddleware = createSagaMiddleware();
+const devTools =
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+
+const store = createStore(rootReducer, compose(
+  applyMiddleware(sagaMiddleware),
+  devTools
+));
+sagaMiddleware.run(rootSaga);
+
+function App() {
+  return (
+    <Provider store={store}>
       <div>
-        <h1>{number}</h1>
-        <button onClick={CounterActions.incrementAsync}>+</button>
-        <button onClick={CounterActions.decrementAsync}>-</button>
+        <Counter />
       </div>
-    );
-  }
+    </Provider>
+  );
 }
 
-export default connect(
-  state => {
-    return {
-      number: state.counter
-    };
-  },
-  dispatch => ({
-    CounterActions: bindActionCreators(counterActions, dispatch)
-  })
-)(App);
+export default App;
